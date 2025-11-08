@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+    </style>
+    <script src="javascript.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <link rel="shortcut icon" type="imagex/png" href="???">
+    <title>Kalil Felipe - Portfólio</title>
+</head>
+
+<body>
+
+    <div id="custom-pointer"></div>
+    <div id="custom-pointer-trail"></div>
+
+    <canvas id="mainCanvas"></canvas>
+
+    <header id="interacao" class="espaçamento">
+
+        <div id="menuespaço">
+            <nav>
+                <menu class="nav-links">
+                    <div id="marker"></div>
+                    <li><a href="#sobre_mim" class="cursor-link-button">Sobre Mim</a></li>
+                    <!--<li><a href="#formacao" class="cursor-link-button">Formação</a></li>-->
+                    <li><a href="#skills" class="cursor-link-button">Skills</a></li>
+                    <li><a href="#projetos" class="cursor-link-button">Projetos</a></li>
+                    <li><a href="#contato" class="cursor-link-button">Contato</a></li>
+                </menu>
+
+                <menu class="botoes">
+                    <li>
+                        <label class="switch cursor-link-button">
+                            <input type="checkbox" id="darkModeToggle">
+                            <span class="slider round"></span>
+                        </label>
+                    </li>
+
+                    
+    <li>
+        <button class="icon-button cursor-link-button" id="languageToggle">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zM4 12c0-.899.156-1.762.431-2.569L6 11l2 2v2l2 2 1 1v1.931C7.061 19.436 4 16.072 4 12zm14.33 4.873C17.677 16.347 16.687 16 16 16v-1a2 2 0 0 0-2-2h-4v-3a2 2 0 0 0 2-2V7h1a2 2 0 0 0 2-2v-.411C17.928 5.778 20 8.65 20 12a7.947 7.947 0 0 1-1.67 4.873z" />
+            </svg>
+            <span id="languageText">PT</span>
+        </button>
+    </li>
+
+    <li>
+        <a href="Currículo Kalil Felipe.pdf" download="Curriculo_Kalil_Felipe.pdf" class="icon-button cursor-link-button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+                <g fill="currentColor">
+                    <path d="M7.8 6.35c.56 0 1.01-.45 1.01-1.01S8.36 4.33 7.8 4.33s-1.01.45-1.01 1.01s.45 1.01 1.01 1.01" />
+                    <path fill-rule="evenodd" d="M9.83 8.55c0-1.08-.91-1.86-2.03-1.86s-2.03.78-2.03 1.86v.51c0 .09.04.18.1.24s.15.1.24.1h3.38c.09 0 .18-.04.24-.1s.1-.15.1-.24zM5.75 11.5a.75.75 0 0 1 .75-.75h7a.75.75 0 0 1 0 1.5h-7a.75.75 0 0 1-.75-.75m0 3a.75.75 0 0 1 .75-.75h7a.75.75 0 0 1 0 1.5h-7a.75.75 0 0 1-.75-.75" clip-rule="evenodd" />
+                    <path fill-rule="evenodd" d="M2.5 2.5c0-1.102.898-2 2-2h6.69c.562 0 1.092.238 1.465.631l.006.007l4.312 4.702c.359.383.527.884.527 1.36v10.3c0 1.102-.898 2-2 2h-11c-1.102 0-2-.898-2-2zm8.689 0H4.5v15h11V7.192l-4.296-4.685l-.003-.001z" clip-rule="evenodd" />
+                    <path fill-rule="evenodd" d="M11.19.5a1 1 0 0 1 1 1v4.7h4.31a1 1 0 1 1 0 2h-5.31a1 1 0 0 1-1-1V1.5a1 1 0 0 1 1-1" clip-rule="evenodd" />
+                </g>
+            </svg>
+            <span id="resumeText">Currículo</span>
+        </a>
+    </li>
+                </menu>
+            </nav>
+            <div class="borda"></div>
+        </div>
+
+
+        <div id="titulo-espaco" class="header-content">
+            <h2>Olá! Eu sou</h2>
+            <h1>KALIL <br>FELIPE</h1>
+
+            <p class="slogan"> Um Desenvolvedor de Softwares que Busca Resolver.</p>
+
+            <div class="action-buttons">
+                <a href="#projetos" class="cta-button cursor-link-button">Ver Projetos</a>
+                <a href="#contato" class="cta-button secondary-cta cursor-link-button">Entre em Contato</a>
+            </div>
+        </div>
+
+    </header>
+
+
+    <main id="sobre_mim">
+        <div class="foto"></div>
+        <div class="titulo">
+            <h3>Sobre Mim</h3>
+            <div class="sublinhado"></div>
+        </div>
+        <div class="texto">
+            <p>Eu sou o Kalil, um estudante de 16 anos, que está atualmente no 2º ano do ensino médio técnico do
+                COTEMIG. Atuo na área de TI, com foco em criação de Softwares/Sites e Agentes de IA para automação.</p>
+            <p>Meu perfil comportamental é Analista e Planejador, gosto de compreender a lógica por traz das coisas e
+                das pessoas ao meu redor, e posso dizer que sou alguém bastante observador.</p>
+            <p>Tenho experiência em HTML/CSS/JS, MySQL, C#, N8N entre outras habilidades que você poderá ver na aba
+                Skills, então não tenha pressa.</p>
+        </div>
+    </main>
+
+    <main id="formacao">
+
+    </main>
+
+    <main id="skills">
+
+        <div class="tit-ski">
+            <h3>Minhas Skills</h3>
+            <div class="sublinhado"></div>
+        </div>
+
+
+        <div id="alternar-habilidades">
+            AIO
+
+            <div class="cursor-custom bg-effect-cursor"></div>
+            <div class="shapes bg-effect-shapes">
+                <div class="shape shape-1"></div>
+                <div class="shape shape-2"></div>
+                <div class="shape shape-3"></div>
+            </div>
+
+            <!-- 2. CONTEÚDO ORIGINAL DA DIV (AGORA POR CIMA DO EFEITO) -->
+            <div class="content-overlay">
+                <div class="opcoes">
+                    <div id="linha-marker"></div>
+                    <span id="botaoSoft" class="ativo cursor-link-button">Soft Skills</span>
+                    <span id="botaoHard" class="cursor-link-button">Hard Skills</span>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div id="espa-grid">
+            <div class="grade-habilidades" id="gradeHabilidades">
+
+                <div class="cartao habilidade-soft">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10"></circle>
+                    </svg>
+                    <h3>Comunicação</h3>
+                    <p>Se expressar bem e ouvir com atenção.</p>
+                </div>
+
+                <div class="cartao habilidade-soft">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10"></circle>
+                    </svg>
+                    <h3>Prestatividade</h3>
+                    <p>Colaborar e ajudar os colegas.</p>
+                </div>
+
+                <div class="cartao habilidade-soft">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10"></circle>
+                    </svg>
+                    <h3>Liderança</h3>
+                    <p>Guiar e inspirar o time.</p>
+                </div>
+
+                <div class="cartao habilidade-soft">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10"></circle>
+                    </svg>
+                    <h3>Criatividade</h3>
+                    <p>Pensar em soluções fora da caixa.</p>
+                </div>
+
+                <div class="cartao habilidade-soft">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10"></circle>
+                    </svg>
+                    <h3>Empatia</h3>
+                    <p>Entender o ponto de vista dos outros.</p>
+                </div>
+
+                <div class="cartao habilidade-soft">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10"></circle>
+                    </svg>
+                    <h3>Organização</h3>
+                    <p>Gerenciar tempo e tarefas com eficiência.</p>
+                </div>
+
+                <div class="cartao habilidade-soft">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10"></circle>
+                    </svg>
+                    <h3>Adaptabilidade</h3>
+                    <p>Saber se ajustar a mudanças rápidas.</p>
+                </div>
+
+                <div class="cartao habilidade-soft">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10"></circle>
+                    </svg>
+                    <h3>Resiliência</h3>
+                    <p>Manter a calma sob pressão.</p>
+                </div>
+
+                <!-- HARD SKILLS -->
+                <div class="cartao habilidade-hard">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10"></circle>
+                    </svg>
+                    <h3>HTML</h3>
+                    <p>Estrutura semântica e acessível.</p>
+                </div>
+
+                <div class="cartao habilidade-hard">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10"></circle>
+                    </svg>
+                    <h3>CSS</h3>
+                    <p>Design moderno e responsivo.</p>
+                </div>
+
+                <div class="cartao habilidade-hard">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10"></circle>
+                    </svg>
+                    <h3>JavaScript</h3>
+                    <p>Interatividade e lógica dinâmica.</p>
+                </div>
+
+                <div class="cartao habilidade-hard">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10"></circle>
+                    </svg>
+                    <h3>React</h3>
+                    <p>Construção de interfaces eficientes.</p>
+                </div>
+
+                <div class="cartao habilidade-hard">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10"></circle>
+                    </svg>
+                    <h3>Node.js</h3>
+                    <p>Desenvolvimento backend escalável.</p>
+                </div>
+
+                <div class="cartao habilidade-hard">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10"></circle>
+                    </svg>
+                    <h3>Git</h3>
+                    <p>Controle de versão profissional.</p>
+                </div>
+
+                <div class="cartao habilidade-hard">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10"></circle>
+                    </svg>
+                    <h3>Figma</h3>
+                    <p>Prototipagem e design UI/UX.</p>
+                </div>
+
+                <div class="cartao habilidade-hard">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10"></circle>
+                    </svg>
+                    <h3>SQL</h3>
+                    <p>Gerenciamento de banco de dados.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- SEÇÃO: VIAGEM NOTURNA -->
+    <main id="projetos">
+        <div class="espa-proj">
+            <h3>Projetos</h3>
+            <div class="sublinhado"></div>
+        </div>
+        <div id="noite-estrelada">
+            <div class="parallax-scene">
+                <div id="sky-layer" class="parallax-layer"></div>
+                <div id="mountain-layer" class="parallax-layer"></div>
+                <div id="road-layer" class="parallax-layer"></div>
+
+                <div id="car"><img class="imagem-carro" src="imgs/logo.png"></div>
+                <div id="constellation-overlay">
+
+                </div>
+                <div id="sites">
+                    <svg id="lines" width="100%" height="100%"
+                        style="position:absolute; top:0; left:0; pointer-events:none;"></svg>
+
+                    <a id="github-moon" class="cursor-link-button" href="https://github.com/KalilFSF"
+                        target="_blank"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path fill="currentColor" fill-opacity="0"
+                                d="M15 4.5c-0.39 -0.1 -1.33 -0.5 -3 -0.5c-1.67 0 -2.61 0.4 -3 0.5c-0.53 -0.43 -1.94 -1.5 -3.5 -1.5c-0.34 1 -0.29 2.22 0 3c-0.75 1 -1 2 -1 3.5c0 2.19 0.48 3.58 1.5 4.5c1.02 0.92 2.11 1.37 3.5 1.5c-0.65 0.54 -0.5 1.87 -0.5 2.5v4h6v-4c0 -0.63 0.15 -1.96 -0.5 -2.5c1.39 -0.13 2.48 -0.58 3.5 -1.5c1.02 -0.92 1.5 -2.31 1.5 -4.5c0 -1.5 -0.25 -2.5 -1 -3.5c0.29 -0.78 0.34 -2 0 -3c-1.56 0 -2.97 1.07 -3.5 1.5Z">
+                                <animate fill="freeze" attributeName="fill-opacity" begin="0.8s" dur="0.15s"
+                                    values="0;0.3" />
+                            </path>
+                            <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                stroke-width="2">
+                                <path stroke-dasharray="32" stroke-dashoffset="32"
+                                    d="M12 4c1.67 0 2.61 0.4 3 0.5c0.53 -0.43 1.94 -1.5 3.5 -1.5c0.34 1 0.29 2.22 0 3c0.75 1 1 2 1 3.5c0 2.19 -0.48 3.58 -1.5 4.5c-1.02 0.92 -2.11 1.37 -3.5 1.5c0.65 0.54 0.5 1.87 0.5 2.5c0 0.73 0 3 0 3M12 4c-1.67 0 -2.61 0.4 -3 0.5c-0.53 -0.43 -1.94 -1.5 -3.5 -1.5c-0.34 1 -0.29 2.22 0 3c-0.75 1 -1 2 -1 3.5c0 2.19 0.48 3.58 1.5 4.5c1.02 0.92 2.11 1.37 3.5 1.5c-0.65 0.54 -0.5 1.87 -0.5 2.5c0 0.73 0 3 0 3">
+                                    <animate fill="freeze" attributeName="stroke-dashoffset" dur="0.7s" values="32;0" />
+                                </path>
+                                <path stroke-dasharray="10" stroke-dashoffset="10"
+                                    d="M9 19c-1.41 0 -2.84 -0.56 -3.69 -1.19c-0.84 -0.63 -1.09 -1.66 -2.31 -2.31">
+                                    <animate fill="freeze" attributeName="stroke-dashoffset" begin="0.8s" dur="0.2s"
+                                        values="10;0" />
+                                </path>
+                            </g>
+                        </svg></a>
+
+                    <div class="bolinha cursor-link-button" id="estrela1"><svg viewBox="0 0 24 24" role="img"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M1.927 23.935a2.4 2.4 0 0 1-1.882-1.883 2.4 2.4 0 0 1 2.82-2.82 2.4 2.4 0 0 1 1.882 1.882 2.4 2.4 0 0 1-2.82 2.82zM21.135 4.768a2.4 2.4 0 0 1-1.882-1.882 2.4 2.4 0 0 1 2.82-2.82 2.4 2.4 0 0 1 1.882 1.882 2.4 2.4 0 0 1-2.82 2.82zM12.021 6.01c1.147 0 2.219.324 3.13.883l2.585-2.585A9.583 9.583 0 0 0 4.328 17.716l2.586-2.586a5.99 5.99 0 0 1 5.107-9.12zm5.107 2.86a5.99 5.99 0 0 1-8.237 8.237l-2.586 2.585A9.583 9.583 0 0 0 19.713 6.284z" />
+                        </svg></div>
+                    <div class="bolinha cursor-link-button" id="estrela2"><svg viewBox="0 0 24 24" role="img"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M1.927 23.935a2.4 2.4 0 0 1-1.882-1.883 2.4 2.4 0 0 1 2.82-2.82 2.4 2.4 0 0 1 1.882 1.882 2.4 2.4 0 0 1-2.82 2.82zM21.135 4.768a2.4 2.4 0 0 1-1.882-1.882 2.4 2.4 0 0 1 2.82-2.82 2.4 2.4 0 0 1 1.882 1.882 2.4 2.4 0 0 1-2.82 2.82zM12.021 6.01c1.147 0 2.219.324 3.13.883l2.585-2.585A9.583 9.583 0 0 0 4.328 17.716l2.586-2.586a5.99 5.99 0 0 1 5.107-9.12zm5.107 2.86a5.99 5.99 0 0 1-8.237 8.237l-2.586 2.585A9.583 9.583 0 0 0 19.713 6.284z" />
+                        </svg></div>
+                    <div class="bolinha cursor-link-button" id="estrela3"><svg viewBox="0 0 24 24" role="img"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M1.927 23.935a2.4 2.4 0 0 1-1.882-1.883 2.4 2.4 0 0 1 2.82-2.82 2.4 2.4 0 0 1 1.882 1.882 2.4 2.4 0 0 1-2.82 2.82zM21.135 4.768a2.4 2.4 0 0 1-1.882-1.882 2.4 2.4 0 0 1 2.82-2.82 2.4 2.4 0 0 1 1.882 1.882 2.4 2.4 0 0 1-2.82 2.82zM12.021 6.01c1.147 0 2.219.324 3.13.883l2.585-2.585A9.583 9.583 0 0 0 4.328 17.716l2.586-2.586a5.99 5.99 0 0 1 5.107-9.12zm5.107 2.86a5.99 5.99 0 0 1-8.237 8.237l-2.586 2.585A9.583 9.583 0 0 0 19.713 6.284z" />
+                        </svg></div>
+                    <div class="bolinha cursor-link-button" id="estrela4"><svg viewBox="0 0 24 24" role="img"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M1.927 23.935a2.4 2.4 0 0 1-1.882-1.883 2.4 2.4 0 0 1 2.82-2.82 2.4 2.4 0 0 1 1.882 1.882 2.4 2.4 0 0 1-2.82 2.82zM21.135 4.768a2.4 2.4 0 0 1-1.882-1.882 2.4 2.4 0 0 1 2.82-2.82 2.4 2.4 0 0 1 1.882 1.882 2.4 2.4 0 0 1-2.82 2.82zM12.021 6.01c1.147 0 2.219.324 3.13.883l2.585-2.585A9.583 9.583 0 0 0 4.328 17.716l2.586-2.586a5.99 5.99 0 0 1 5.107-9.12zm5.107 2.86a5.99 5.99 0 0 1-8.237 8.237l-2.586 2.585A9.583 9.583 0 0 0 19.713 6.284z" />
+                        </svg></div>
+                    <div class="bolinha cursor-link-button" id="estrela5"><svg viewBox="0 0 24 24" role="img"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M1.927 23.935a2.4 2.4 0 0 1-1.882-1.883 2.4 2.4 0 0 1 2.82-2.82 2.4 2.4 0 0 1 1.882 1.882 2.4 2.4 0 0 1-2.82 2.82zM21.135 4.768a2.4 2.4 0 0 1-1.882-1.882 2.4 2.4 0 0 1 2.82-2.82 2.4 2.4 0 0 1 1.882 1.882 2.4 2.4 0 0 1-2.82 2.82zM12.021 6.01c1.147 0 2.219.324 3.13.883l2.585-2.585A9.583 9.583 0 0 0 4.328 17.716l2.586-2.586a5.99 5.99 0 0 1 5.107-9.12zm5.107 2.86a5.99 5.99 0 0 1-8.237 8.237l-2.586 2.585A9.583 9.583 0 0 0 19.713 6.284z" />
+                        </svg></div>
+                    <div class="bolinha cursor-link-button" id="estrela6"><svg viewBox="0 0 24 24" role="img"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M1.927 23.935a2.4 2.4 0 0 1-1.882-1.883 2.4 2.4 0 0 1 2.82-2.82 2.4 2.4 0 0 1 1.882 1.882 2.4 2.4 0 0 1-2.82 2.82zM21.135 4.768a2.4 2.4 0 0 1-1.882-1.882 2.4 2.4 0 0 1 2.82-2.82 2.4 2.4 0 0 1 1.882 1.882 2.4 2.4 0 0 1-2.82 2.82zM12.021 6.01c1.147 0 2.219.324 3.13.883l2.585-2.585A9.583 9.583 0 0 0 4.328 17.716l2.586-2.586a5.99 5.99 0 0 1 5.107-9.12zm5.107 2.86a5.99 5.99 0 0 1-8.237 8.237l-2.586 2.585A9.583 9.583 0 0 0 19.713 6.284z" />
+                        </svg></div>
+                </div>
+            </div>
+        </div>
+
+        </div>
+        <div id="btn-projetos">
+            <!-- Botão principal -->
+            <button id="toggle-button" class="cursor-link-button">Iniciar Viagem</button><br>
+
+            <!-- Botões de seleção de veículo -->
+            <div class="vehicle-btn-container">
+                <button class="vehicle-btn cursor-link-button"><img class="imagem-carro" src="imgs/logo.png" alt=""
+                        height="20px"></button>
+                <button class="vehicle-btn cursor-link-button"><img class="imagem-moto" src="imgs/logo.png" alt=""
+                        height="20px"></button>
+                <button class="vehicle-btn cursor-link-button"><img class="imagem-viagem" src="imgs/logo.png" alt=""
+                        height="20px"></button>
+                <button class="vehicle-btn cursor-link-button"><img class="imagem-onibus" src="imgs/logo.png" alt=""
+                        height="20px"></button>
+            </div>
+        </div>
+
+        <!-- Conteúdos -->
+        <!-- Substitua todos os modais existentes por este novo formato -->
+        <main id="main1" class="conteudo">
+            <div class="modal-content">
+                <span class="close cursor-link-button">&times;</span>
+                <div class="modal-header">
+                    <h3 class="modal-title">Projeto 1</h3>
+                    <div class="modal-subtitle">Lorem Ipsum dolor sit</div>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-image">
+                        <img src="https://placehold.co/100x60/1f1f20/fff?text=Projeto1" alt="Projeto 1">
+                    </div>
+                    <div class="modal-description">
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris vulputate purus lectus, quis
+                            lacinia ex tincidunt ut. Nam ac ultrices metus. Nam sem velit, finibus quis urna nec,
+                            suscipit dignissim lorem. Sed vel lacinia ante, sed fermentum quam.</p>
+                        <!--<ul class="modal-features">
+                    <li>Gráficos interativos</li>
+                    <li>Dados em tempo real</li>
+                    <li>Exportação de relatórios</li>
+                    <li>Multiplataforma</li>-->
+                        </ul>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="https://meuprojeto2.com" target="_blank" class="modal-link cursor-link-button">
+                        <svg viewBox="0 0 24 24" width="20" height="20">
+                            <path fill="currentColor"
+                                d="M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V12H19V19Z" />
+                        </svg>
+                        Visitar Site
+                    </a>
+                </div>
+            </div>
+        </main>
+
+        <main id="main2" class="conteudo">
+            <div class="modal-content">
+                <span class="close cursor-link-button">&times;</span>
+                <div class="modal-header">
+                    <h3 class="modal-title">Projeto 2</h3>
+                    <div class="modal-subtitle">Lorem Ipsum dolor sit</div>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-image">
+                        <img src="https://placehold.co/100x60/1f1f20/fff?text=Projeto2" alt="Projeto 2">
+                    </div>
+                    <div class="modal-description">
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris vulputate purus lectus, quis
+                            lacinia ex tincidunt ut. Nam ac ultrices metus. Nam sem velit, finibus quis urna nec,
+                            suscipit dignissim lorem. Sed vel lacinia ante, sed fermentum quam.</p>
+                        <!--<ul class="modal-features">
+                    <li>Gráficos interativos</li>
+                    <li>Dados em tempo real</li>
+                    <li>Exportação de relatórios</li>
+                    <li>Multiplataforma</li>-->
+                        </ul>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="https://meuprojeto2.com" target="_blank" class="modal-link cursor-link-button">
+                        <svg viewBox="0 0 24 24" width="20" height="20">
+                            <path fill="currentColor"
+                                d="M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V12H19V19Z" />
+                        </svg>
+                        Visitar Site
+                    </a>
+                </div>
+            </div>
+        </main>
+
+        <!-- Continue com os outros modais (main3 a main6) seguindo o mesmo padrão -->
+
+        <main id="main3" class="conteudo">
+            <div class="modal-content">
+                <span class="close cursor-link-button">&times;</span>
+                <div class="modal-header">
+                    <h3 class="modal-title">Projeto 3</h3>
+                    <div class="modal-subtitle">Lorem Ipsum dolor sit</div>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-image">
+                        <img src="https://placehold.co/100x60/1f1f20/fff?text=Projeto3" alt="Projeto 3">
+                    </div>
+                    <div class="modal-description">
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris vulputate purus lectus, quis
+                            lacinia ex tincidunt ut. Nam ac ultrices metus. Nam sem velit, finibus quis urna nec,
+                            suscipit dignissim lorem. Sed vel lacinia ante, sed fermentum quam.</p>
+                        <!--<ul class="modal-features">
+                    <li>Gráficos interativos</li>
+                    <li>Dados em tempo real</li>
+                    <li>Exportação de relatórios</li>
+                    <li>Multiplataforma</li>-->
+                        </ul>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="https://meuprojeto2.com" target="_blank" class="modal-link cursor-link-button">
+                        <svg viewBox="0 0 24 24" width="20" height="20">
+                            <path fill="currentColor"
+                                d="M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V12H19V19Z" />
+                        </svg>
+                        Visitar Site
+                    </a>
+                </div>
+            </div>
+        </main>
+
+        <main id="main4" class="conteudo">
+            <div class="modal-content">
+                <span class="close cursor-link-button">&times;</span>
+                <div class="modal-header">
+                    <h3 class="modal-title">Projeto 4</h3>
+                    <div class="modal-subtitle">Lorem Ipsum dolor sit</div>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-image">
+                        <img src="https://placehold.co/100x60/1f1f20/fff?text=Projeto4" alt="Projeto 4">
+                    </div>
+                    <div class="modal-description">
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris vulputate purus lectus, quis
+                            lacinia ex tincidunt ut. Nam ac ultrices metus. Nam sem velit, finibus quis urna nec,
+                            suscipit dignissim lorem. Sed vel lacinia ante, sed fermentum quam.</p>
+                        <!--<ul class="modal-features">
+                    <li>Gráficos interativos</li>
+                    <li>Dados em tempo real</li>
+                    <li>Exportação de relatórios</li>
+                    <li>Multiplataforma</li>-->
+                        </ul>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="https://meuprojeto2.com" target="_blank" class="modal-link cursor-link-button">
+                        <svg viewBox="0 0 24 24" width="20" height="20">
+                            <path fill="currentColor"
+                                d="M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V12H19V19Z" />
+                        </svg>
+                        Visitar Site
+                    </a>
+                </div>
+            </div>
+        </main>
+
+        <main id="main5" class="conteudo">
+            <div class="modal-content">
+                <span class="close cursor-link-button">&times;</span>
+                <div class="modal-header">
+                    <h3 class="modal-title">Projeto 5</h3>
+                    <div class="modal-subtitle">Lorem Ipsum dolor sit</div>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-image">
+                        <img src="https://placehold.co/100x60/1f1f20/fff?text=Projeto5" alt="Projeto 5">
+                    </div>
+                    <div class="modal-description">
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris vulputate purus lectus, quis
+                            lacinia ex tincidunt ut. Nam ac ultrices metus. Nam sem velit, finibus quis urna nec,
+                            suscipit dignissim lorem. Sed vel lacinia ante, sed fermentum quam.</p>
+                        <!--<ul class="modal-features">
+                    <li>Gráficos interativos</li>
+                    <li>Dados em tempo real</li>
+                    <li>Exportação de relatórios</li>
+                    <li>Multiplataforma</li>-->
+                        </ul>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="https://meuprojeto2.com" target="_blank" class="modal-link cursor-link-button">
+                        <svg viewBox="0 0 24 24" width="20" height="20">
+                            <path fill="currentColor"
+                                d="M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V12H19V19Z" />
+                        </svg>
+                        Visitar Site
+                    </a>
+                </div>
+            </div>
+        </main>
+
+        <main id="main6" class="conteudo">
+            <div class="modal-content">
+                <span class="close cursor-link-button">&times;</span>
+                <div class="modal-header">
+                    <h3 class="modal-title">Projeto 6</h3>
+                    <div class="modal-subtitle">Lorem Ipsum dolor sit</div>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-image">
+                        <img src="https://placehold.co/100x60/1f1f20/fff?text=Projeto6" alt="Projeto 6">
+                    </div>
+                    <div class="modal-description">
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris vulputate purus lectus, quis
+                            lacinia ex tincidunt ut. Nam ac ultrices metus. Nam sem velit, finibus quis urna nec,
+                            suscipit dignissim lorem. Sed vel lacinia ante, sed fermentum quam.</p>
+                        <!--<ul class="modal-features">
+                    <li>Gráficos interativos</li>
+                    <li>Dados em tempo real</li>
+                    <li>Exportação de relatórios</li>
+                    <li>Multiplataforma</li>-->
+                        </ul>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="https://meuprojeto2.com" target="_blank" class="modal-link cursor-link-button">
+                        <svg viewBox="0 0 24 24" width="20" height="20">
+                            <path fill="currentColor"
+                                d="M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V12H19V19Z" />
+                        </svg>
+                        Visitar Site
+                    </a>
+                </div>
+            </div>
+        </main>
+
+
+    </main>
+
+    <!-- Seção de Contato -->
+    <main id="contato">
+        <div class="tit-cont">
+            <h3>Contato</h3>
+            <div class="sublinhado" id="cont-subli"></div>
+        </div>
+
+        <form id="form-contato" autocomplete="off">
+
+            <div class="campo-contato">
+                <label for="nome">Nome</label>
+                <input type="text" id="nome" name="nome" class="cursor-text-box" placeholder="Digite seu Nome Completo"
+                    required>
+            </div>
+
+            <div class="campo-contato">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" class="cursor-text-box" placeholder="Digite seu e-mail"
+                    required>
+            </div>
+
+            <div class="campo-contato telefone">
+                <label for="telefone">Telefone</label>
+                <input type="tel" id="telefone" name="telefone" class="cursor-text-box" placeholder="(00) 00000-0000">
+            </div>
+
+            <div class="campo-contato mensagem">
+                <label for="mensagem">Mensagem</label>
+                <textarea id="mensagem" name="mensagem" rows="5" class="cursor-text-box" required
+                    placeholder="Escreva sua mensagem aqui..."></textarea>
+            </div>
+            <div id="area-cont">
+                <button type="submit" id="btn-enviar" class="cursor-link-button">Enviar</button>
+                <span>ou</span>
+                <a href="https://wa.me/553195132502" class="tel-cont cursor-link-button">+55 31 9513-2502</a>
+            </div>
+        </form>
+    </main>
+
+    <!-- Footer -->
+    <footer id="footer">
+        <p>© 2025 Kalil Felipe • Todos os direitos reservados</p>
+    </footer>
+
+
+
+</body>
+
+</html>
