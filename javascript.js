@@ -502,25 +502,27 @@ addEventListener('DOMContentLoaded', () => {
     if (alternarHabilidades && bgEffectCursor && bgEffectShapes.length > 0) {
 
         // Listener de movimento de mouse APENAS na div alvo
-        alternarHabilidades.addEventListener("mousemove", evt => {
-            // Usa offsetX e offsetY para coordenadas RELATIVAS à div #alternar-habilidades
-            const mouseX = evt.offsetX;
-            const mouseY = evt.offsetY;
+        alternarHabilidades.addEventListener("mousemove", (evt) => {
 
-            // Move o cursor personalizado (o pequeno ponto)
-            gsap.set(bgEffectCursor, {
-                x: mouseX,
-                y: mouseY
-            });
+    const rect = alternarHabilidades.getBoundingClientRect();
 
-            // Move as formas coloridas (o efeito de arrasto)
-            gsap.to(bgEffectShapes, {
-                x: mouseX,
-                y: mouseY,
-                stagger: -0.08, // Ajuste leve no stagger
-                ease: "power2.out"
-            });
-        });
+    const mouseX = evt.clientX - rect.left;
+    const mouseY = evt.clientY - rect.top;
+
+    gsap.set(bgEffectCursor, {
+        x: mouseX,
+        y: mouseY
+    });
+
+    gsap.to(bgEffectShapes, {
+        x: mouseX,
+        y: mouseY,
+        stagger: -0.08,
+        ease: "power2.out",
+        duration: 0.45
+    });
+
+});
 
         // Efeito de aparecer/desaparecer ao entrar e sair
         alternarHabilidades.addEventListener("mouseenter", () => {
@@ -797,6 +799,76 @@ telefone.addEventListener("input", () => {
     }
 });
 
+const foto = document.querySelector(".foto");
+const canvas = document.getElementById("scratchCanvas");
+const ctx = canvas.getContext("2d");
+
+let overlayVisible = true;
+
+function resizeCanvas() {
+    canvas.width = foto.offsetWidth;
+    canvas.height = foto.offsetHeight;
+    drawOverlay();
+}
+
+function drawOverlay() {
+    ctx.globalCompositeOperation = "source-over";
+
+    const img = new Image();
+    img.src = "imgs/27.png"; // IMAGEM DE CIMA
+
+    img.onload = () => {
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    };
+}
+
+function reveal(x, y) {
+    if (!overlayVisible) return;
+
+    ctx.globalCompositeOperation = "destination-out";
+
+    const radius = 45;
+
+    const gradient = ctx.createRadialGradient(
+        x, y, 0,
+        x, y, radius
+    );
+
+    gradient.addColorStop(0, "rgba(0,0,0,1)");
+    gradient.addColorStop(1, "rgba(0,0,0,0)");
+
+    ctx.fillStyle = gradient;
+
+    ctx.beginPath();
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
+    ctx.fill();
+}
+
+canvas.addEventListener("mousemove", (e) => {
+    const rect = canvas.getBoundingClientRect();
+
+    reveal(
+        e.clientX - rect.left,
+        e.clientY - rect.top
+    );
+});
+
+canvas.addEventListener("click", () => {
+
+    overlayVisible = !overlayVisible;
+
+    if (!overlayVisible) {
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+    } else {
+        drawOverlay();
+    }
+});
+
+window.addEventListener("resize", resizeCanvas);
+
+resizeCanvas();
+
 // ==================================
 // 8. TRADUÇÃO PORTUGUÊS/INGLÊS
 // ==================================
@@ -812,6 +884,7 @@ const translations = {
         skills: "Skills",
         projetos: "Projetos",
         contato: "Contato",
+        resume: "Currículo",
         
         // Header
         ola: "Olá! Eu sou",
@@ -898,6 +971,7 @@ const translations = {
         skills: "Skills",
         projetos: "Projects",
         contato: "Contact",
+        resume: "Resume/CV",
         
         // Header
         ola: "Hello! I'm",
@@ -989,6 +1063,7 @@ function applyTranslation(language) {
     document.querySelector('a[href="#skills"]').textContent = texts.skills;
     document.querySelector('a[href="#projetos"]').textContent = texts.projetos;
     document.querySelector('a[href="#contato"]').textContent = texts.contato;
+    document.querySelector('.curriculo-mobile').textContent = texts.resume;
     
     // Header
     document.querySelector('#titulo-espaco h2').textContent = texts.ola;
@@ -1091,3 +1166,11 @@ languageToggle.addEventListener('click', () => {
 const savedLanguage = localStorage.getItem('language') || 'pt';
 currentLanguage = savedLanguage;
 applyTranslation(currentLanguage);
+
+const menuToggle = document.getElementById("menu-toggle");
+const mobileMenu = document.getElementById("mobile-menu");
+
+menuToggle.addEventListener("click", () => {
+    mobileMenu.classList.toggle("active");
+    menuToggle.classList.toggle("active");
+});
