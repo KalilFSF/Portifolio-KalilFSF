@@ -25,13 +25,20 @@
 
         <div id="menuespaço">
             <nav>
-                <menu class="nav-links">
+                <menu class="nav-links" id="mobile-menu">
                     <div id="marker"></div>
                     <li><a href="#sobre_mim" class="cursor-link-button">Sobre Mim</a></li>
                     <!--<li><a href="#formacao" class="cursor-link-button">Formação</a></li>-->
                     <li><a href="#skills" class="cursor-link-button">Skills</a></li>
                     <li><a href="#projetos" class="cursor-link-button">Projetos</a></li>
                     <li><a href="#contato" class="cursor-link-button">Contato</a></li>
+
+                    <li class="mobile-curriculo">
+                        <a href="Currículo Kalil Felipe.pdf" download="Curriculo_Kalil_Felipe.pdf"
+                            class="cursor-link-button curriculo-mobile">
+                            Currículo
+                        </a>
+                    </li>
                 </menu>
 
                 <menu class="botoes">
@@ -42,44 +49,64 @@
                         </label>
                     </li>
 
-                    
-    <li>
-        <button class="icon-button cursor-link-button" id="languageToggle">
-            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zM4 12c0-.899.156-1.762.431-2.569L6 11l2 2v2l2 2 1 1v1.931C7.061 19.436 4 16.072 4 12zm14.33 4.873C17.677 16.347 16.687 16 16 16v-1a2 2 0 0 0-2-2h-4v-3a2 2 0 0 0 2-2V7h1a2 2 0 0 0 2-2v-.411C17.928 5.778 20 8.65 20 12a7.947 7.947 0 0 1-1.67 4.873z" />
-            </svg>
-            <span id="languageText">PT</span>
-        </button>
-    </li>
 
-    <li>
-        <a href="Currículo Kalil Felipe.pdf" download="Curriculo_Kalil_Felipe.pdf" class="icon-button cursor-link-button">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
-                <g fill="currentColor">
-                    <path d="M7.8 6.35c.56 0 1.01-.45 1.01-1.01S8.36 4.33 7.8 4.33s-1.01.45-1.01 1.01s.45 1.01 1.01 1.01" />
-                    <path fill-rule="evenodd" d="M9.83 8.55c0-1.08-.91-1.86-2.03-1.86s-2.03.78-2.03 1.86v.51c0 .09.04.18.1.24s.15.1.24.1h3.38c.09 0 .18-.04.24-.1s.1-.15.1-.24zM5.75 11.5a.75.75 0 0 1 .75-.75h7a.75.75 0 0 1 0 1.5h-7a.75.75 0 0 1-.75-.75m0 3a.75.75 0 0 1 .75-.75h7a.75.75 0 0 1 0 1.5h-7a.75.75 0 0 1-.75-.75" clip-rule="evenodd" />
-                    <path fill-rule="evenodd" d="M2.5 2.5c0-1.102.898-2 2-2h6.69c.562 0 1.092.238 1.465.631l.006.007l4.312 4.702c.359.383.527.884.527 1.36v10.3c0 1.102-.898 2-2 2h-11c-1.102 0-2-.898-2-2zm8.689 0H4.5v15h11V7.192l-4.296-4.685l-.003-.001z" clip-rule="evenodd" />
-                    <path fill-rule="evenodd" d="M11.19.5a1 1 0 0 1 1 1v4.7h4.31a1 1 0 1 1 0 2h-5.31a1 1 0 0 1-1-1V1.5a1 1 0 0 1 1-1" clip-rule="evenodd" />
-                </g>
-            </svg>
-            <span id="resumeText">Currículo</span>
-        </a>
-    </li>
+                    <li>
+                        <button class="icon-button cursor-link-button" id="languageToggle">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zM4 12c0-.899.156-1.762.431-2.569L6 11l2 2v2l2 2 1 1v1.931C7.061 19.436 4 16.072 4 12zm14.33 4.873C17.677 16.347 16.687 16 16 16v-1a2 2 0 0 0-2-2h-4v-3a2 2 0 0 0 2-2V7h1a2 2 0 0 0 2-2v-.411C17.928 5.778 20 8.65 20 12a7.947 7.947 0 0 1-1.67 4.873z" />
+                            </svg>
+                            <span id="languageText">PT</span>
+                        </button>
+                    </li>
+
+                    <li>
+                        <a href="Currículo Kalil Felipe.pdf" download="Curriculo_Kalil_Felipe.pdf"
+                            class="icon-button cursor-link-button curriculo-desktop">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+                                <g fill="currentColor">
+                                    <path
+                                        d="M7.8 6.35c.56 0 1.01-.45 1.01-1.01S8.36 4.33 7.8 4.33s-1.01.45-1.01 1.01s.45 1.01 1.01 1.01" />
+                                    <path fill-rule="evenodd"
+                                        d="M9.83 8.55c0-1.08-.91-1.86-2.03-1.86s-2.03.78-2.03 1.86v.51c0 .09.04.18.1.24s.15.1.24.1h3.38c.09 0 .18-.04.24-.1s.1-.15.1-.24zM5.75 11.5a.75.75 0 0 1 .75-.75h7a.75.75 0 0 1 0 1.5h-7a.75.75 0 0 1-.75-.75m0 3a.75.75 0 0 1 .75-.75h7a.75.75 0 0 1 0 1.5h-7a.75.75 0 0 1-.75-.75"
+                                        clip-rule="evenodd" />
+                                    <path fill-rule="evenodd"
+                                        d="M2.5 2.5c0-1.102.898-2 2-2h6.69c.562 0 1.092.238 1.465.631l.006.007l4.312 4.702c.359.383.527.884.527 1.36v10.3c0 1.102-.898 2-2 2h-11c-1.102 0-2-.898-2-2zm8.689 0H4.5v15h11V7.192l-4.296-4.685l-.003-.001z"
+                                        clip-rule="evenodd" />
+                                    <path fill-rule="evenodd"
+                                        d="M11.19.5a1 1 0 0 1 1 1v4.7h4.31a1 1 0 1 1 0 2h-5.31a1 1 0 0 1-1-1V1.5a1 1 0 0 1 1-1"
+                                        clip-rule="evenodd" />
+                                </g>
+                            </svg>
+                            <span id="resumeText">Currículo</span>
+                        </a>
+                    </li>
                 </menu>
+                <button id="menu-toggle" class="menu-toggle cursor-link-button">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
             </nav>
             <div class="borda"></div>
         </div>
 
 
         <div id="titulo-espaco" class="header-content">
-            <h2>Olá! Eu sou</h2>
-            <h1>KALIL <br>FELIPE</h1>
+            <div class="header-texto">
+                <h2>Olá! Eu sou</h2>
+                <h1>KALIL <br>FELIPE</h1>
 
-            <p class="slogan"> Um Desenvolvedor de Softwares que Busca Resolver.</p>
+                <p class="slogan">Um Desenvolvedor de Softwares que Busca Resolver.</p>
 
-            <div class="action-buttons">
-                <a href="#projetos" class="cta-button cursor-link-button">Ver Projetos</a>
-                <a href="#contato" class="cta-button secondary-cta cursor-link-button">Entre em Contato</a>
+                <div class="action-buttons">
+                    <a href="#projetos" class="cta-button cursor-link-button">Ver Projetos</a>
+                    <a href="#contato" class="cta-button secondary-cta cursor-link-button">Entre em Contato</a>
+                </div>
+            </div>
+
+            <div class="header-imagem">
+                <img src="imgs/obras.png" alt="Imagem do header">
             </div>
         </div>
 
@@ -87,7 +114,9 @@
 
 
     <main id="sobre_mim">
-        <div class="foto"></div>
+        <div class="foto">
+            <canvas id="scratchCanvas"></canvas>
+        </div>
         <div class="titulo">
             <h3>Sobre Mim</h3>
             <div class="sublinhado"></div>
@@ -283,7 +312,7 @@
                 <div id="mountain-layer" class="parallax-layer"></div>
                 <div id="road-layer" class="parallax-layer"></div>
 
-                <div id="car"><img class="imagem-carro" src="imgs/logo.png"></div>
+                <div id="car"><img class="imagem-carro" src="imgs/obras.png"></div>
                 <div id="constellation-overlay">
 
                 </div>
@@ -353,13 +382,13 @@
 
             <!-- Botões de seleção de veículo -->
             <div class="vehicle-btn-container">
-                <button class="vehicle-btn cursor-link-button"><img class="imagem-carro" src="imgs/logo.png" alt=""
+                <button class="vehicle-btn cursor-link-button"><img class="imagem-carro" src="imgs/obras.png" alt=""
                         height="20px"></button>
-                <button class="vehicle-btn cursor-link-button"><img class="imagem-moto" src="imgs/logo.png" alt=""
+                <button class="vehicle-btn cursor-link-button"><img class="imagem-moto" src="imgs/obras.png" alt=""
                         height="20px"></button>
-                <button class="vehicle-btn cursor-link-button"><img class="imagem-viagem" src="imgs/logo.png" alt=""
+                <button class="vehicle-btn cursor-link-button"><img class="imagem-viagem" src="imgs/obras.png" alt=""
                         height="20px"></button>
-                <button class="vehicle-btn cursor-link-button"><img class="imagem-onibus" src="imgs/logo.png" alt=""
+                <button class="vehicle-btn cursor-link-button"><img class="imagem-onibus" src="imgs/obras.png" alt=""
                         height="20px"></button>
             </div>
         </div>
@@ -375,7 +404,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="modal-image">
-                        <img src="https://placehold.co/100x60/1f1f20/fff?text=Projeto1" alt="Projeto 1">
+                        <img src="imgs/obras.png" alt="Projeto 1">
                     </div>
                     <div class="modal-description">
                         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris vulputate purus lectus, quis
@@ -410,7 +439,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="modal-image">
-                        <img src="https://placehold.co/100x60/1f1f20/fff?text=Projeto2" alt="Projeto 2">
+                        <img src="imgs/obras.png" alt="Projeto 2">
                     </div>
                     <div class="modal-description">
                         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris vulputate purus lectus, quis
@@ -447,7 +476,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="modal-image">
-                        <img src="https://placehold.co/100x60/1f1f20/fff?text=Projeto3" alt="Projeto 3">
+                        <img src="imgs/obras.png" alt="Projeto 3">
                     </div>
                     <div class="modal-description">
                         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris vulputate purus lectus, quis
@@ -482,7 +511,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="modal-image">
-                        <img src="https://placehold.co/100x60/1f1f20/fff?text=Projeto4" alt="Projeto 4">
+                        <img src="imgs/obras.png" alt="Projeto 4">
                     </div>
                     <div class="modal-description">
                         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris vulputate purus lectus, quis
@@ -517,7 +546,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="modal-image">
-                        <img src="https://placehold.co/100x60/1f1f20/fff?text=Projeto5" alt="Projeto 5">
+                        <img src="imgs/obras.png" alt="Projeto 5">
                     </div>
                     <div class="modal-description">
                         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris vulputate purus lectus, quis
@@ -552,7 +581,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="modal-image">
-                        <img src="https://placehold.co/100x60/1f1f20/fff?text=Projeto6" alt="Projeto 6">
+                        <img src="imgs/obras.png" alt="Projeto 6">
                     </div>
                     <div class="modal-description">
                         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris vulputate purus lectus, quis
