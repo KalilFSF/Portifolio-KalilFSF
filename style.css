@@ -10,6 +10,8 @@
     --color-select: #663839f5;
     --color-select-30: #6638394d;
 
+    --color-mobile: #4d2c32;
+
     --mouse-color: #22284f8c;
     --mouse-eye-color: #22284ff2;
 
@@ -29,7 +31,7 @@
 
     --mouse-conts: #EBE3D48c;
     --mouse-eye-conts: #EBE3D4f2;
-    
+
     --modal-shadow: rgba(84, 48, 54, 0.2);
     --modal-feature-bg: rgba(120, 64, 60, 0.1);
 }
@@ -44,6 +46,8 @@ body.dark-mode {
 
     --color-select: #C0F8FFf5;
     --color-select-30: #C0F8FF4d;
+
+    --color-mobile: #e2e2e2;
 
     --mouse-color: #EBE3D48c;
     --mouse-eye-color: #EBE3D4f2;
@@ -150,13 +154,13 @@ body {
 
 /* Canvas e Particulas */
 
-canvas {
+#mainCanvas {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 110%;
-    height: 90vh;
-    z-index: -1;
+    top:0;
+    left:0;
+    width:110%;
+    height:90vh;
+    z-index:-1;
 }
 
 /* 1º pág: Header */
@@ -180,6 +184,43 @@ header {
     padding: 1.5vh 1.2vh;
     flex-direction: column;
     z-index: 100;
+}
+
+.mobile-curriculo {
+    display: none;
+}
+
+.menu-toggle {
+    display: none;
+    width: 40px;
+    height: 32px;
+    background: transparent;
+    border: none;
+    position: relative;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 0;
+}
+
+.menu-toggle span {
+    display: block;
+    height: 4px;
+    width: 100%;
+    background: var(--text-primary);
+    border-radius: 10px;
+    transition: all 0.35s ease;
+}
+
+.menu-toggle.active span:nth-child(1) {
+    transform: translateY(14px) rotate(45deg);
+}
+
+.menu-toggle.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.menu-toggle.active span:nth-child(3) {
+    transform: translateY(-14px) rotate(-45deg);
 }
 
 nav {
@@ -335,11 +376,59 @@ input:checked+.slider:before {
 /* Conteudo do Header */
 
 #titulo-espaco {
-    margin-top: clamp(150px, 20vh, 250px);
+    margin-top: clamp(100px, 20vh, 250px);
     padding: 0 calc(5vw + 30px);
     max-width: 1800px;
     width: 100%;
     z-index: 10;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 40px;
+}
+
+@media (max-width: 640px) {
+    #titulo-espaco {
+        padding: 0 calc(1.5vw + 20px);
+        justify-content: flex-start;
+    }
+
+    .header-imagem img {
+        width: clamp(150px, 28vw, 420px);
+        height: auto;
+        display: block;
+    }
+}
+
+@media (max-width: 600px) {
+    #titulo-espaco {
+        padding: 0 3vw;
+        justify-content: flex-start;
+    }
+
+}
+
+.header-texto {
+    flex: 1;
+}
+
+.header-imagem {
+    flex-shrink: 0;
+}
+
+@media (max-width: 600px) {
+
+    .header-imagem {
+        display: none;
+    }
+
+}
+
+.header-imagem img {
+    width: clamp(250px, 28vw, 420px);
+    height: auto;
+    display: block;
 }
 
 h2 {
@@ -367,9 +456,20 @@ h1 {
 
 .action-buttons {
     display: flex;
-    gap: 20px;
-    margin-top: 30px;
+    column-gap: 15px;
+    row-gap: 10px;
+    margin-top: 20px;
     flex-wrap: wrap;
+}
+
+@media (max-width: 835px) {
+    .action-buttons {
+        display: flex;
+        column-gap: 15px;
+        row-gap: 10px;
+        margin-top: 10px;
+        flex-wrap: wrap;
+    }
 }
 
 .cta-button {
@@ -430,40 +530,41 @@ h1 {
 
 @media (max-width: 1038px) {
     #sobre_mim {
-    grid-template-columns: 50% 2.5fr;
-}
+        grid-template-columns: 50% 2.5fr;
+    }
 
-.texto {
-    font-size: clamp(16px, 2.2vw, 22px) !important;
-}
+    .texto {
+        font-size: clamp(16px, 2.2vw, 22px) !important;
+    }
 
-.texto p{
-    margin: 2vh 0px !important;
-    line-height: 1 !important;
-}
+    .texto p {
+        margin: 2vh 0px !important;
+        line-height: 1 !important;
+    }
 }
 
 @media (max-width: 732px) {
-    
+
     #sobre_mim {
-    grid-template-rows: clamp(6rem, 3rem + 6vw, 12rem) auto;
-}
+        grid-template-rows: clamp(6rem, 3rem + 6vw, 12rem) auto;
+    }
 }
 
 @media (max-width: 600px) {
     #sobre_mim {
-    grid-template-areas:
-        "foto"
-        "titulo"
-        "texto";
-    grid-template-columns: auto;
-    grid-template-rows: auto;
-    row-gap: 0.5rem;
-}
-.foto {
-    aspect-ratio: 35/40 !important;
-    border-radius: 10rem 10rem 0px 0px !important;
-}
+        grid-template-areas:
+            "foto"
+            "titulo"
+            "texto";
+        grid-template-columns: auto;
+        grid-template-rows: auto;
+        row-gap: 0.5rem;
+    }
+
+    .foto {
+        aspect-ratio: 35/40 !important;
+        border-radius: 10rem 10rem 0px 0px !important;
+    }
 
 }
 
@@ -471,12 +572,26 @@ h1 {
 
 .foto {
     grid-area: foto;
+    position: relative;
+    overflow: hidden;
+
     background-image: url('imgs/eu-img.jpg');
     background-size: cover;
-    background-repeat: no-repeat;
     background-position: center;
+    background-repeat: no-repeat;
+
     aspect-ratio: 35/40;
-    border-radius: 20vh 20vh 0px 0px;
+    border-radius: 20vh 20vh 0 0;
+}
+
+/* canvas por cima */
+#scratchCanvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    cursor: none;
 }
 
 .titulo {
@@ -504,7 +619,7 @@ h3 {
     max-width: 702px !important
 }
 
-.texto p{
+.texto p {
     margin: 2.3vh 0px;
     line-height: 1.4;
 }
@@ -586,6 +701,12 @@ h3 {
     /* Espaçamento interno original */
     display: flex;
     flex-direction: column;
+}
+
+.opcoes,
+.opcoes span,
+#linha-marker {
+    pointer-events: auto;
 }
 
 .bg-effect-shapes {
@@ -723,16 +844,16 @@ h3 {
         gap: 1.2rem;
         padding: 0 0.5rem;
     }
-    
+
     .cartao {
         padding: 1.2rem 0.8rem;
         min-height: 180px;
     }
-    
+
     .cartao h3 {
         font-size: 1.4rem;
     }
-    
+
     .cartao p {
         font-size: 0.9rem;
     }
@@ -740,41 +861,41 @@ h3 {
 
 /* Tablets Pequenos (600px - 768px) */
 @media (max-width: 768px) {
-    
+
     .grade-habilidades {
         grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
         gap: 1rem;
     }
-    
+
     .cartao {
         padding: 1rem 0.8rem;
         min-height: 160px;
     }
-    
+
     .cartao svg {
         width: 35px;
         height: 35px;
         margin-bottom: 0.5rem;
     }
-    
+
     .cartao h3 {
         font-size: 1.3rem;
         margin-bottom: 0.3rem;
     }
-    
+
     .cartao p {
         font-size: 0.85rem;
     }
-    
+
     #alternar-habilidades {
         margin: 1.5rem auto;
         padding: 1.2rem 0.8rem;
     }
-    
+
     .opcoes {
         gap: 1rem;
     }
-    
+
     .opcoes span {
         font-size: 1.1rem;
     }
@@ -790,7 +911,7 @@ h3 {
         padding: 0px;
     }
 
-    #espa-grid{
+    #espa-grid {
         padding: 0px;
     }
 
@@ -798,20 +919,20 @@ h3 {
         padding: 1.5rem 1rem;
         min-height: 140px;
     }
-    
+
     .cartao:hover {
         transform: translateY(-5px);
     }
-    
+
     #alternar-habilidades {
         padding: 1rem 0.5rem;
         border-radius: 15px;
     }
-    
+
     .opcoes {
         gap: 0.8rem;
     }
-    
+
     .opcoes span {
         font-size: 1rem;
         padding-bottom: 4px;
@@ -820,39 +941,39 @@ h3 {
 
 /* Telefones Pequenos (até 480px) */
 @media (max-width: 480px) {
-    
+
     .grade-habilidades {
         gap: 0.8rem;
     }
-    
+
     .cartao {
         padding: 1.2rem 0.8rem;
         min-height: 130px;
     }
-    
+
     .cartao svg {
         width: 30px;
         height: 30px;
         margin-bottom: 0.4rem;
     }
-    
+
     .cartao h3 {
         font-size: 1.2rem;
     }
-    
+
     .cartao p {
         font-size: 0.8rem;
     }
-    
+
     #alternar-habilidades {
         margin: 1rem auto;
         padding: 0.8rem 0.5rem;
     }
-    
+
     .opcoes {
         gap: 0.5rem;
     }
-    
+
     .opcoes span {
         font-size: 0.9rem;
     }
@@ -864,20 +985,21 @@ h3 {
         grid-template-columns: repeat(4, minmax(300px, 1fr));
         gap: 2rem;
     }
-    
+
     .cartao {
         padding: 2rem 1.5rem;
         min-height: 220px;
     }
-    
+
     .cartao h3 {
         font-size: 1.8rem;
     }
-    
+
     .cartao p {
         font-size: 1.1rem;
     }
 }
+
 /* 4º pág: Projetos */
 
 
@@ -897,7 +1019,7 @@ h3 {
     flex-direction: column;
 }
 
-.espa-proj{
+.espa-proj {
     margin: 0% calc(5vw + 30px);
 }
 
@@ -952,7 +1074,7 @@ h3 {
     z-index: 30;
     width: 280%;
     background-image: var(--img-rua);
-    
+
     background-size: auto 100%;
 }
 
@@ -979,24 +1101,21 @@ h3 {
     left: 110%;
     transform: translateX(-50%);
     z-index: -1;
-    
+
     width: 80%;
     height: 250%;
 
-    background: linear-gradient(
-        to bottom,
-        #f5f5f599,
-        #f5f5f566 30%,
-        #f5f5f500
-    );
+    background: linear-gradient(to bottom,
+            #f5f5f599,
+            #f5f5f566 30%,
+            #f5f5f500);
 
-    clip-path: polygon(
-        50% 0%,
-        100% 100%,
-        0% 100%
-    );
+    clip-path: polygon(50% 0%,
+            100% 100%,
+            0% 100%);
 
-    transform:  rotate(-90deg);}
+    transform: rotate(-90deg);
+}
 
 
 /* Posição padrão */
@@ -1036,22 +1155,22 @@ body:not(.dark-mode) #car::before {
     display: block;
 }
 
-.imagem-carro{
+.imagem-carro {
     content: var(--img-carro);
     height: 2.2vh;
 }
 
-.imagem-moto{
+.imagem-moto {
     content: var(--img-moto);
     height: 2.2vh;
 }
 
-.imagem-viagem{
+.imagem-viagem {
     content: var(--img-viagem);
     height: 2.2vh;
 }
 
-.imagem-onibus{
+.imagem-onibus {
     content: var(--img-onibus);
     height: 2.2vh;
 }
@@ -1059,24 +1178,27 @@ body:not(.dark-mode) #car::before {
 
 /* ESTRELAS E CONSTELAÇÃO */
 #constellation-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 10;
-  pointer-events: none; /* por padrão não interfere; ativamos para a constelação interna */
-  opacity: 0;
-  transition: opacity 2.3s ease-in-out;
-  background: radial-gradient(circle at 50% 10%, rgba(255,255,255,0.06) 0%, rgba(0,0,0,0) 60%);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    pointer-events: none;
+    /* por padrão não interfere; ativamos para a constelação interna */
+    opacity: 0;
+    transition: opacity 2.3s ease-in-out;
+    background: radial-gradient(circle at 50% 10%, rgba(255, 255, 255, 0.06) 0%, rgba(0, 0, 0, 0) 60%);
 }
 
 #sites {
-    position: absolute; /* Para posicionar em relação ao overlay */
+    position: absolute;
+    /* Para posicionar em relação ao overlay */
     top: 50%;
     left: 50%;
     z-index: 99;
-    transform: translate(-50%, -50%); /* Centraliza o quadrado */
+    transform: translate(-50%, -50%);
+    /* Centraliza o quadrado */
     opacity: 0;
     pointer-events: none;
     transition: opacity 2.3s ease-in-out;
@@ -1103,42 +1225,67 @@ body:not(.dark-mode) #car::before {
 }
 
 .bolinha {
-  position: absolute;
-  width: 4%;
-  aspect-ratio: 1/1;
-  border-radius: 50%;
-  background: var(--cor-estrelas);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  transition: transform 0.3s;
+    position: absolute;
+    width: 4%;
+    aspect-ratio: 1/1;
+    border-radius: 50%;
+    background: var(--cor-estrelas);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    transition: transform 0.3s;
 }
 
 .bolinha:hover {
-  transform: scale(1.2);
+    transform: scale(1.2);
 }
 
 /* === Posições das estrelas === */
-  #estrela1 { left: 34%; top: 40%; }
-  #estrela2 { left: 45%; top: 20%; }
-  #estrela3 { left: 42%; top: 55%; }
-  #estrela4 { left: 55%; top: 35%; }
-  #estrela5 { left: 65%; top: 45%; }
-  #estrela6 { left: 75%; top: 40%; }
+#estrela1 {
+    left: 34%;
+    top: 40%;
+}
+
+#estrela2 {
+    left: 45%;
+    top: 20%;
+}
+
+#estrela3 {
+    left: 42%;
+    top: 55%;
+}
+
+#estrela4 {
+    left: 55%;
+    top: 35%;
+}
+
+#estrela5 {
+    left: 65%;
+    top: 45%;
+}
+
+#estrela6 {
+    left: 75%;
+    top: 40%;
+}
 
 svg line {
-  stroke: var(--cor-estrelas);
+    stroke: var(--cor-estrelas);
 }
 
-.bolinha svg, #github-moon svg {
+.bolinha svg,
+#github-moon svg {
     width: 65%;
     height: 65%;
-    fill:var(--bg-page)
+    fill: var(--bg-page)
 }
 
-#github-moon{
-    color: var(--text-primary); /* Usará a cor primária do tema */
+#github-moon {
+    color: var(--text-primary);
+    /* Usará a cor primária do tema */
 }
 
 /* Sol/Lua do GitHub */
@@ -1147,15 +1294,15 @@ svg line {
     width: 8%;
     aspect-ratio: 1/1;
     border-radius: 50%;
-    right: 15%; 
+    right: 15%;
     top: 15%;
     display: block;
     z-index: 100;
     text-decoration: none;
     transition: 0.8s;
     display: flex;
-  align-items: center;
-  justify-content: center;
+    align-items: center;
+    justify-content: center;
 
     background-color: var(--color-select-30);
     border: solid 0.8vh var(--text-primary);
@@ -1203,6 +1350,7 @@ svg line {
         opacity: 0;
         transform: translateY(-50px) scale(0.9);
     }
+
     to {
         opacity: 1;
         transform: translateY(0) scale(1);
@@ -1361,7 +1509,8 @@ svg line {
 
 
 #toggle-button:hover {
-    background-position: -100% 0; /* Move o gradiente 100% para a esquerda */
+    background-position: -100% 0;
+    /* Move o gradiente 100% para a esquerda */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
     transition: 0.8s;
     text-decoration: underline 0.1rem;
@@ -1401,55 +1550,56 @@ svg line {
 
 
 #contato {
-  width: 100%;
-  min-height: 100vh;
-  padding: 4% calc(5vw + 30px) 3%;
-  background-color: var(--text-primary);
-  color: var(--bg-page);
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
+    width: 100%;
+    min-height: 100vh;
+    padding: 4% calc(5vw + 30px) 3%;
+    background-color: var(--text-primary);
+    color: var(--bg-page);
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
 }
 
-#contato .tit-cont h3{
-  color: var(--bg-page);
+#contato .tit-cont h3 {
+    color: var(--bg-page);
 }
-#cont-subli{
+
+#cont-subli {
     background-color: var(--bg-page);
 }
 
 #form-contato {
-  display: grid;
-  gap: 1.6rem;
+    display: grid;
+    gap: 1.6rem;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 5rem auto;
 }
 
-.mensagem{
+.mensagem {
     grid-column: span 2;
 }
 
-.mensagem textarea{
+.mensagem textarea {
     resize: none;
     height: 35vh;
 }
 
-@media (max-width: 768px){
-    #form-contato{
+@media (max-width: 768px) {
+    #form-contato {
         display: flex;
         flex-direction: column;
     }
 }
 
 .campo-contato {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  font-size: 1.1rem;
-  color: var(--bg-page);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    font-size: 1.1rem;
+    color: var(--bg-page);
 }
 
-.campo-contato label{
+.campo-contato label {
     font-weight: 600;
     font-size: clamp(16px, 2.5vw, 24px);
 
@@ -1458,110 +1608,115 @@ svg line {
 
 .campo-contato input,
 .campo-contato textarea {
-  padding: 9px;
-  border-radius: 10px;
-  background-color: var(--bg-page-50);
-  backdrop-filter: blur(6px);
-  border: 2px solid var(--bg-page);
-  font-size: 1rem;
-  color: var(--bg-nav);
-  transition: border-color var(--cor-estrelas), box-shadow var(--cor-estrelas);
-  font-weight: 500;
-  transition: 0.3s;
+    padding: 9px;
+    border-radius: 10px;
+    background-color: var(--bg-page-50);
+    backdrop-filter: blur(6px);
+    border: 2px solid var(--bg-page);
+    font-size: 1rem;
+    color: var(--bg-nav);
+    transition: border-color var(--cor-estrelas), box-shadow var(--cor-estrelas);
+    font-weight: 500;
+    transition: 0.3s;
 }
 
 .campo-contato input:focus,
 .campo-contato textarea:focus {
-  border-color: var(--text-secondary);
-  box-shadow: 0 0 0 3px var(--input-select);
-  outline: none;
+    border-color: var(--text-secondary);
+    box-shadow: 0 0 0 3px var(--input-select);
+    outline: none;
 }
 
-#area-cont{
+#area-cont {
     text-align: center;
     align-items: center;
     grid-column: span 2;
 }
 
-.telefone{
+.telefone {
     grid-column: span 2;
 }
 
 ::-moz-placeholder {
-  color: var(--text-primary);
-  font-weight: 400;
-  text-decoration: underline;
-  opacity: 0.8;
+    color: var(--text-primary);
+    font-weight: 400;
+    text-decoration: underline;
+    opacity: 0.8;
 }
 
 :-ms-input-placeholder {
-  color: var(--text-primary);
-  text-decoration: underline;
-  font-weight: 400;
-  opacity: 0.8;
+    color: var(--text-primary);
+    text-decoration: underline;
+    font-weight: 400;
+    opacity: 0.8;
 }
+
 ::placeholder {
-  color: var(--text-primary);
-  text-decoration: underline;
-  font-weight: 400;
-  opacity: 0.8;
+    color: var(--text-primary);
+    text-decoration: underline;
+    font-weight: 400;
+    opacity: 0.8;
 }
 
 #btn-enviar {
-  background-color: var(--bg-page);
-  color: var(--text-primary);
-  padding: 14px 45px;
-  border-radius: 12px;
-  font-size: 1.2rem;
-  font-weight: 700;
-  border: 3px solid var(--bg-page);
-  transition: 0.3s;
-  width: fit-content;
-  
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+    padding: 14px 45px;
+    border-radius: 12px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    border: 3px solid var(--bg-page);
+    transition: 0.3s;
+    width: fit-content;
+
 }
 
 #btn-enviar:hover {
-  background-color: var(--bg-page-50);
-  border-color: var(--bg-page-50);
-  transform: translateY(-3px);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+    background-color: var(--bg-page-50);
+    border-color: var(--bg-page-50);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
 }
 
-#area-cont span{
+#area-cont span {
     font-size: clamp(2rem, 1.6rem + 1vw, 3.5rem);
     font-weight: 900;
-    margin: 2vh 0px ;
+    margin: 2vh 0px;
     display: block;
 }
 
-.tel-cont{
+.tel-cont {
     background-image: linear-gradient(90deg, var(--bg-page), var(--cor-veiculo), var(--bg-page));
-    background-size: 200% 100%; /* Duplica o tamanho para permitir o shift */
+    background-size: 200% 100%;
+    /* Duplica o tamanho para permitir o shift */
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
     cursor: pointer;
-    transition: background-position 1s ease; /* Transição na saída do hover */
+    transition: background-position 1s ease;
+    /* Transição na saída do hover */
     font-size: clamp(2rem, 1.5rem + 2vw, 3.5rem);
     font-weight: 900;
     cursor: none;
 }
 
 .tel-cont:hover {
-    background-position: -100% 0; /* Move o gradiente 100% para a esquerda */
-    transition: background-position 0.5s linear; /* Animação rápida na entrada */
+    background-position: -100% 0;
+    /* Move o gradiente 100% para a esquerda */
+    transition: background-position 0.5s linear;
+    /* Animação rápida na entrada */
 
 }
 
 #footer {
-  width: 100%;
-  text-align: center;
-  padding: 15px;
-  background-color: var(--text-primary);
-  backdrop-filter: blur(6px);
-  color: var(--bg-page);
-  font-size: 0.9rem;
-  border-top: 6px solid var(--bg-page);
+    width: 100%;
+    text-align: center;
+    padding: 15px;
+    background-color: var(--text-primary);
+    backdrop-filter: blur(6px);
+    color: var(--bg-page);
+    font-size: 0.9rem;
+    border-top: 6px solid var(--bg-page);
 }
 
 
@@ -1609,9 +1764,6 @@ svg line {
 }
 
 @media (max-width: 600px) {
-    #titulo-espaco {
-        padding: 0 3vw;
-    }
 
     .nav-links li a {
         font-size: 0.9rem;
@@ -1647,21 +1799,21 @@ svg line {
         min-height: 90vh;
         padding-bottom: 5%;
     }
-    
+
     #noite-estrelada {
         height: 70vh;
     }
-    
+
     #car {
         width: 25vh;
         bottom: 8vh;
     }
-    
+
     .vehicle-btn-container {
         margin-bottom: 6%;
         padding: 0.6rem 1rem;
     }
-    
+
     .vehicle-btn {
         font-size: 1.7rem;
     }
@@ -1673,38 +1825,38 @@ svg line {
         min-height: 85vh;
         padding-top: 8%;
     }
-    
+
     #noite-estrelada {
         height: 60vh;
     }
-    
+
     #car {
         width: 22vh;
         bottom: 9vh;
     }
-    
+
     #road-layer {
         height: 18vh;
     }
-    
+
     .bolinha {
         width: 5%;
         font-size: 16px;
     }
-    
+
     #github-moon {
         width: 10%;
     }
-    
+
     .vehicle-btn-container {
         margin-bottom: 8%;
         padding: 0.5rem 0.8rem;
     }
-    
+
     .vehicle-btn {
         font-size: 1.5rem;
     }
-    
+
     #toggle-button {
         padding: 12px 24px;
         font-size: 1rem;
@@ -1717,66 +1869,89 @@ svg line {
         min-height: 80vh;
         padding-top: 12%;
     }
-    
+
     .espa-proj {
         margin: 0 5%;
     }
-    
+
     #noite-estrelada {
         height: 50vh;
     }
-    
+
     #car {
         width: 18vh;
         bottom: 10vh;
     }
-    
+
     #road-layer {
         height: 15vh;
         width: 300%;
     }
-    
+
     .parallax-layer {
         width: 250%;
     }
-    
+
     /* Ajuste das estrelas para telas menores */
     .bolinha {
         width: 6%;
         font-size: 14px;
     }
-    
-    #estrela1 { left: 30%; top: 35%; }
-    #estrela2 { left: 40%; top: 15%; }
-    #estrela3 { left: 38%; top: 50%; }
-    #estrela4 { left: 50%; top: 30%; }
-    #estrela5 { left: 60%; top: 40%; }
-    #estrela6 { left: 70%; top: 35%; }
-    
+
+    #estrela1 {
+        left: 30%;
+        top: 35%;
+    }
+
+    #estrela2 {
+        left: 40%;
+        top: 15%;
+    }
+
+    #estrela3 {
+        left: 38%;
+        top: 50%;
+    }
+
+    #estrela4 {
+        left: 50%;
+        top: 30%;
+    }
+
+    #estrela5 {
+        left: 60%;
+        top: 40%;
+    }
+
+    #estrela6 {
+        left: 70%;
+        top: 35%;
+    }
+
     #github-moon {
         width: 12%;
         right: 10%;
         top: 10%;
     }
-    
+
     .vehicle-btn-container {
         margin-bottom: 10%;
         padding: 0.4rem 0.6rem;
     }
-    
+
     .vehicle-btn {
         font-size: 1.3rem;
     }
-    
+
     .vehicle-btn:hover {
         transform: scale(1.15);
     }
-    
+
     #toggle-button {
         padding: 10px 20px;
         font-size: 0.95rem;
     }
-    
+
 
 }
 
@@ -1786,50 +1961,50 @@ svg line {
         min-height: 75vh;
         padding-top: 15%;
     }
-    
+
     #noite-estrelada {
         height: 45vh;
     }
-    
+
     #car {
         width: 15vh;
         bottom: 11vh;
     }
-    
+
     #road-layer {
         height: 13vh;
         width: 350%;
     }
-    
+
     .parallax-layer {
         width: 300%;
     }
-    
+
     .bolinha {
         width: 7%;
         font-size: 12px;
     }
-    
+
     #github-moon {
         width: 15%;
         right: 8%;
         top: 8%;
     }
-    
+
     .vehicle-btn-container {
         margin-bottom: 12%;
         padding: 0.3rem 0.5rem;
     }
-    
+
     .vehicle-btn {
         font-size: 1.1rem;
     }
-    
+
     #toggle-button {
         padding: 8px 16px;
         font-size: 0.9rem;
     }
-    
+
     /* Modal em telas muito pequenas */
     .modal-content {
         width: 85%;
@@ -1843,20 +2018,20 @@ svg line {
     #projetos {
         height: 125vh;
     }
-    
+
     #noite-estrelada {
         height: 90vh;
     }
-    
+
     #car {
         width: 32vh;
         bottom: 6vh;
     }
-    
+
     .vehicle-btn-container {
         margin-bottom: 3%;
     }
-    
+
     .vehicle-btn {
         font-size: 2.2rem;
     }
@@ -1868,16 +2043,16 @@ svg line {
         min-height: 120vh;
         padding-top: 8%;
     }
-    
+
     #noite-estrelada {
         height: 70vh;
     }
-    
+
     #car {
         width: 20vh;
         bottom: 12vh;
     }
-    
+
     .vehicle-btn-container {
         margin-bottom: 5%;
     }
@@ -1891,16 +2066,16 @@ svg line {
         width: 85%;
         margin: 8% auto;
     }
-    
+
     .modal-body {
         gap: 1.5rem;
         padding: 1.5rem;
     }
-    
+
     .modal-header {
         padding: 1.5rem 1.5rem 1rem;
     }
-    
+
     .modal-footer {
         padding: 1.5rem;
     }
@@ -1913,21 +2088,21 @@ svg line {
         margin: 10% auto;
         max-height: 85vh;
     }
-    
+
     .modal-body {
         grid-template-columns: 1fr;
         gap: 1.2rem;
         padding: 1.2rem;
     }
-    
+
     .modal-header {
         padding: 1.2rem 1.2rem 0.8rem;
     }
-    
+
     .modal-footer {
         padding: 1.2rem;
     }
-    
+
     .modal-image {
         order: -1;
     }
@@ -1941,28 +2116,28 @@ svg line {
         max-height: 90vh;
         border-radius: 15px;
     }
-    
+
     .modal-body {
         padding: 1rem;
         gap: 1rem;
     }
-    
+
     .modal-header {
         padding: 1rem 1rem 0.5rem;
         border-radius: 12px 12px 0 0;
     }
-    
+
     .modal-footer {
         padding: 1rem;
         border-radius: 0 0 12px 12px;
     }
-    
+
     .close {
         top: 10px;
         right: 15px;
         font-size: 24px;
     }
-    
+
     .modal-link {
         padding: 10px 20px;
         font-size: 0.9rem;
@@ -1976,28 +2151,28 @@ svg line {
         margin: 2% auto;
         border-radius: 12px;
     }
-    
+
     .modal-body {
         padding: 0.8rem;
         gap: 0.8rem;
     }
-    
+
     .modal-header {
         padding: 0.8rem 0.8rem 0.5rem;
     }
-    
+
     .modal-footer {
         padding: 0.8rem;
     }
-    
+
     .modal-title {
         font-size: 1.5rem;
     }
-    
+
     .modal-subtitle {
         font-size: 0.9rem;
     }
-    
+
     .modal-features li {
         font-size: 0.85rem;
         padding: 0.4rem 0;
@@ -2011,16 +2186,16 @@ svg line {
         margin: 2% auto;
         max-height: 96vh;
     }
-    
+
     .modal-body {
         grid-template-columns: 1fr 1fr;
         padding: 1rem;
     }
-    
+
     .modal-header {
         padding: 1rem 1rem 0.5rem;
     }
-    
+
     .modal-footer {
         padding: 1rem;
     }
@@ -2033,28 +2208,34 @@ svg line {
     z-index: 100;
     display: inline-block;
     background-color: rgba(31, 41, 55, 0.9);
-    padding: 1rem 1.5rem; /* Aumentei o padding */
-    border-radius: 16px; /* Aumentei o border-radius */
+    padding: 1rem 1.5rem;
+    /* Aumentei o padding */
+    border-radius: 16px;
+    /* Aumentei o border-radius */
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     margin-bottom: 4%;
 }
 
 .vehicle-btn {
-    font-size: 2.8rem; /* Aumentei o tamanho da fonte */
+    font-size: 2.8rem;
+    /* Aumentei o tamanho da fonte */
     background: transparent;
     border: none;
     cursor: none;
     color: white;
     transition: transform 0.2s ease;
-    padding: 0 8px; /* Adicionei padding horizontal */
+    padding: 0 8px;
+    /* Adicionei padding horizontal */
 }
 
 .vehicle-btn:hover {
-    transform: scale(1.3); /* Aumentei ligeiramente o hover */
+    transform: scale(1.3);
+    /* Aumentei ligeiramente o hover */
 }
 
 .vehicle-btn img {
-    width: 40px; /* Defini um tamanho fixo para as imagens */
+    width: 40px;
+    /* Defini um tamanho fixo para as imagens */
     height: 40px;
     object-fit: contain;
 }
@@ -2064,12 +2245,12 @@ svg line {
     .vehicle-btn-container {
         padding: 0.8rem 1.2rem;
     }
-    
+
     .vehicle-btn {
         font-size: 2.2rem;
         padding: 0 6px;
     }
-    
+
     .vehicle-btn img {
         width: 35px;
         height: 35px;
@@ -2080,12 +2261,12 @@ svg line {
     .vehicle-btn-container {
         padding: 0.6rem 1rem;
     }
-    
+
     .vehicle-btn {
         font-size: 1.8rem;
         padding: 0 4px;
     }
-    
+
     .vehicle-btn img {
         width: 30px;
         height: 30px;
@@ -2094,16 +2275,17 @@ svg line {
 
 /* ============ DESATIVAR CURSOR PERSONALIZADO EM MOBILE ============ */
 @media (max-width: 768px) {
+
     /* Restaurar cursor padrão e esconder cursor personalizado */
     * {
         cursor: auto !important;
     }
-    
+
     #custom-pointer,
     #custom-pointer-trail {
         display: none !important;
     }
-    
+
     /* Garantir que elementos interativos tenham cursor pointer */
     .cursor-link-button,
     button,
@@ -2121,7 +2303,7 @@ svg line {
     .opcoes span {
         cursor: pointer !important;
     }
-    
+
     /* Garantir que campos de texto tenham cursor text */
     .cursor-text-box,
     input[type="text"],
@@ -2129,5 +2311,146 @@ svg line {
     input[type="tel"],
     textarea {
         cursor: text !important;
+    }
+}
+
+#menu-toggle {
+    display: none;
+    background: transparent;
+    border: none;
+    font-size: 2rem;
+    color: var(--text-primary);
+}
+
+@media (max-width: 366px) {
+    nav {
+        flex-direction: row;
+
+    }
+
+    .nav-links {
+        justify-content: center;
+        width: auto;
+    }
+
+    #mobile-menu li a{
+        font-size: 0.9rem;
+        color: var(--bg-page);
+
+        opacity: 0;
+        transform: translateY(-18px) scale(0.95);
+        transition:
+            opacity 0.45s ease,
+            transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    /* LINKS ABERTOS */
+    #mobile-menu.active li a{
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+    /* CASCATA */
+    #mobile-menu.active li a:nth-child(1) {
+        transition-delay: 0.12s;
+    }
+
+    #mobile-menu.active li a:nth-child(2) {
+        transition-delay: 0.18s;
+    }
+
+    #mobile-menu.active li a:nth-child(3) {
+        transition-delay: 0.24s;
+    }
+
+    #mobile-menu.active li a:nth-child(4) {
+        transition-delay: 0.30s;
+    }
+
+    #mobile-menu.active li a:nth-child(5) {
+        transition-delay: 0.36s;
+    }
+
+    #mobile-menu.active li a:nth-child(6) {
+        transition-delay: 0.42s;
+    }
+
+    .botoes {
+        justify-content: center;
+        width: auto;
+    }
+
+    .curriculo-desktop {
+        display: none;
+    }
+
+    .menu-toggle {
+        display: flex !important;
+        z-index: 300;
+        min-height: 30px;
+        min-width: 30px;
+    }
+
+    #mobile-menu {
+        display: flex;
+        position: absolute;
+        top: calc(85px - 1.6vh);
+        left: 0;
+        right: 0.5px;
+
+        flex-direction: column;
+        align-items: center;
+        gap: 18px;
+        padding: 10px;
+
+        background: var(--color-mobile);
+
+        overflow: hidden;
+        transform-origin: top center;
+
+        /* fechado */
+        transform: scaleY(0) rotateX(-25deg);
+        opacity: 0;
+        max-height: 0;
+        pointer-events: none;
+
+        transition:
+            transform 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+            opacity 0.4s ease,
+            max-height 0.65s ease;
+    }
+
+    /* aberto */
+    #mobile-menu.active {
+        transform: scaleY(1) rotateX(0deg);
+        opacity: 1;
+        max-height: 500px;
+        pointer-events: all;
+    }
+
+    /* brilho/sombra estilo papiro */
+    #mobile-menu::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 14px;
+
+        pointer-events: none;
+    }
+
+    .mobile-curriculo {
+        padding-top: 10px;
+        border-top: 4px solid var(--bg-page);
+        width: 100%;
+        text-align: center;
+        display: inline;
+    }
+
+    .mobile-curriculo a {
+        font-weight: 700;
+        color: var(--bg-page);
+        text-decoration: none;
     }
 }
