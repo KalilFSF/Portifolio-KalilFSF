@@ -206,6 +206,7 @@ addEventListener('DOMContentLoaded', () => {
     }
 
     iniciarRaspadinha();
+    updateIconsForTheme();
 
     function updateParticleColors() {
         const newColors = body.classList.contains('dark-mode') ? darkColors : lightColors;
@@ -224,6 +225,7 @@ addEventListener('DOMContentLoaded', () => {
         updateParticleColors();
         drawLines();
         iniciarRaspadinha();
+        updateIconsForTheme();
     });
 
 
@@ -526,48 +528,75 @@ addEventListener('DOMContentLoaded', () => {
     mostrarSoft();
 
     /* javascript.js */
-    /* ADICIONE depois de mostrarSoft(); */
 
-    const coinToggle = document.getElementById("coinToggle");
-    let cardsOpened = false;
+const coinToggle = document.getElementById("coinToggle");
+let cardsOpened = false;
 
-    function atualizarEstadoMoeda() {
+function atualizarEstadoMoeda() {
+    // 1. Aplica a classe ao body e ao botão da moeda
     document.body.classList.toggle("cards-open", cardsOpened);
     coinToggle.classList.toggle("flipped", cardsOpened);
 
-    /* animação em TODOS os canvases ao abrir e fechar */
+    // 2. Animação dos canvases das raspadinhas
     const canvases = document.querySelectorAll(".scratch-canvas");
 
     canvases.forEach((canvas, index) => {
+        // Reset inicial para forçar o reinício da transição se necessário
         canvas.style.transition = "none";
         canvas.style.transform = "scale(.95)";
+        
+        // Se cardsOpened for true, o canvas deve sumir (opacity 0)
+        // Se for false, o canvas deve aparecer (opacity 1)
         canvas.style.opacity = cardsOpened ? "1" : "0";
 
         setTimeout(() => {
-            canvas.style.transition =
-                "transform .45s cubic-bezier(.22,1,.36,1), opacity .45s ease";
-
+            canvas.style.transition = "transform .45s cubic-bezier(.22,1,.36,1), opacity .45s ease";
             canvas.style.transform = "scale(1)";
             canvas.style.opacity = cardsOpened ? "0" : "1";
         }, 20 + (index * 40));
     });
 }
 
-    coinToggle.addEventListener("click", () => {
-        cardsOpened = !cardsOpened;
-        atualizarEstadoMoeda();
-    });
+// Evento de clique na moeda
+coinToggle.addEventListener("click", () => {
+    cardsOpened = !cardsOpened;
+    atualizarEstadoMoeda();
+});
 
-    /* sempre que recriar a raspadinha mantém estado */
-    const iniciarRaspadinhaOriginal = iniciarRaspadinha;
+// Função para atualizar as imagens baseadas no tema (Claro/Escuro)
+function updateIconsForTheme() {
+    const frontIcon = document.querySelector('.coin-face.front .coin-icon');
+    const backIcon = document.querySelector('.coin-face.back .coin-icon');
+    
+    if (!frontIcon || !backIcon) return;
 
-    iniciarRaspadinha = function () {
+    const isDark = document.body.classList.contains('dark-mode');
+
+    if (isDark) {
+        frontIcon.src = 'imgs/coroa-noite.png';
+        backIcon.src = 'imgs/harpa-noite.png';
+    } else {
+        frontIcon.src = 'imgs/coroa-dia.png';
+        backIcon.src = 'imgs/harpa-dia.png';
+    }
+}
+
+// Interceptador para manter o estado ao recriar raspadinhas
+const iniciarRaspadinhaOriginal = window.iniciarRaspadinha;
+window.iniciarRaspadinha = function () {
+    if (typeof iniciarRaspadinhaOriginal === "function") {
         iniciarRaspadinhaOriginal();
+    }
 
-        if (cardsOpened) {
-            document.body.classList.add("cards-open");
-        }
-    };
+    if (cardsOpened) {
+        document.body.classList.add("cards-open");
+        const canvases = document.querySelectorAll(".scratch-canvas");
+        canvases.forEach(c => c.style.opacity = "0");
+    }
+};
+
+// Lembre-se de chamar updateIconsForTheme() dentro da sua função 
+// que alterna o modo escuro (Dark Mode) para que as imagens mudem na hora!
 
     // ===================================
     // 6. LÓGICA DO EFEITO MOUSE-FOLLOW (GSAP)
