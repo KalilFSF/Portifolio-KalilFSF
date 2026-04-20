@@ -114,8 +114,9 @@
 
 
     <main id="sobre_mim">
-        <div class="foto">
-            <canvas id="scratchCanvas"></canvas>
+        <div class="foto cursor-link-button inverso" id="fotoContainer">
+            <img src="imgs/eu-img.jpg" class="img-base">
+            <img src="var(--img-vitral)" class="img-topo" id="imgTopo">
         </div>
         <div class="titulo">
             <h3>Sobre Mim</h3>
@@ -137,13 +138,24 @@
 
     <main id="skills">
 
-        <div class="tit-ski">
-            <h3>Minhas Skills</h3>
+        <div>
+            <div class="tit-ski">
+                <h3>Minhas Skills</h3>
+
+                <button id="coinToggle" class="coin-button cursor-link-button"
+                    aria-label="Mostrar ou esconder topo dos cartões">
+                    <div class="coin-inner">
+                        <span class="coin-face front">👁</span>
+                        <span class="coin-face back">✦</span>
+                    </div>
+                </button>
+            </div>
+
             <div class="sublinhado"></div>
         </div>
 
 
-        <div id="alternar-habilidades">
+        <div id="alternar-habilidades" class="inverso">
             AIO
 
             <div class="cursor-custom bg-effect-cursor"></div>
@@ -168,7 +180,7 @@
         <div id="espa-grid">
             <div class="grade-habilidades" id="gradeHabilidades">
 
-                <div class="cartao habilidade-soft">
+                <div class="cartao habilidade-soft cursor-link-button inverso">
                     <svg viewBox="0 0 24 24">
                         <circle cx="12" cy="12" r="10"></circle>
                     </svg>
@@ -176,7 +188,7 @@
                     <p>Se expressar bem e ouvir com atenção.</p>
                 </div>
 
-                <div class="cartao habilidade-soft">
+                <div class="cartao habilidade-soft cursor-link-button inverso">
                     <svg viewBox="0 0 24 24">
                         <circle cx="12" cy="12" r="10"></circle>
                     </svg>
@@ -184,7 +196,7 @@
                     <p>Colaborar e ajudar os colegas.</p>
                 </div>
 
-                <div class="cartao habilidade-soft">
+                <div class="cartao habilidade-soft cursor-link-button inverso">
                     <svg viewBox="0 0 24 24">
                         <circle cx="12" cy="12" r="10"></circle>
                     </svg>
@@ -192,7 +204,7 @@
                     <p>Guiar e inspirar o time.</p>
                 </div>
 
-                <div class="cartao habilidade-soft">
+                <div class="cartao habilidade-soft cursor-link-button inverso">
                     <svg viewBox="0 0 24 24">
                         <circle cx="12" cy="12" r="10"></circle>
                     </svg>
@@ -200,7 +212,7 @@
                     <p>Pensar em soluções fora da caixa.</p>
                 </div>
 
-                <div class="cartao habilidade-soft">
+                <div class="cartao habilidade-soft cursor-link-button inverso">
                     <svg viewBox="0 0 24 24">
                         <circle cx="12" cy="12" r="10"></circle>
                     </svg>
@@ -208,7 +220,7 @@
                     <p>Entender o ponto de vista dos outros.</p>
                 </div>
 
-                <div class="cartao habilidade-soft">
+                <div class="cartao habilidade-soft cursor-link-button inverso">
                     <svg viewBox="0 0 24 24">
                         <circle cx="12" cy="12" r="10"></circle>
                     </svg>
@@ -216,7 +228,7 @@
                     <p>Gerenciar tempo e tarefas com eficiência.</p>
                 </div>
 
-                <div class="cartao habilidade-soft">
+                <div class="cartao habilidade-soft cursor-link-button inverso">
                     <svg viewBox="0 0 24 24">
                         <circle cx="12" cy="12" r="10"></circle>
                     </svg>
@@ -224,7 +236,7 @@
                     <p>Saber se ajustar a mudanças rápidas.</p>
                 </div>
 
-                <div class="cartao habilidade-soft">
+                <div class="cartao habilidade-soft cursor-link-button inverso">
                     <svg viewBox="0 0 24 24">
                         <circle cx="12" cy="12" r="10"></circle>
                     </svg>
@@ -233,7 +245,7 @@
                 </div>
 
                 <!-- HARD SKILLS -->
-                <div class="cartao habilidade-hard">
+                <div class="cartao habilidade-hard cursor-link-button inverso">
                     <svg viewBox="0 0 24 24">
                         <circle cx="12" cy="12" r="10"></circle>
                     </svg>
@@ -241,7 +253,7 @@
                     <p>Estrutura semântica e acessível.</p>
                 </div>
 
-                <div class="cartao habilidade-hard">
+                <div class="cartao habilidade-hard cursor-link-button inverso">
                     <svg viewBox="0 0 24 24">
                         <circle cx="12" cy="12" r="10"></circle>
                     </svg>
@@ -249,7 +261,7 @@
                     <p>Design moderno e responsivo.</p>
                 </div>
 
-                <div class="cartao habilidade-hard">
+                <div class="cartao habilidade-hard cursor-link-button inverso">
                     <svg viewBox="0 0 24 24">
                         <circle cx="12" cy="12" r="10"></circle>
                     </svg>
@@ -257,7 +269,7 @@
                     <p>Interatividade e lógica dinâmica.</p>
                 </div>
 
-                <div class="cartao habilidade-hard">
+                <div class="cartao habilidade-hard cursor-link-button inverso">
                     <svg viewBox="0 0 24 24">
                         <circle cx="12" cy="12" r="10"></circle>
                     </svg>
@@ -265,7 +277,7 @@
                     <p>Construção de interfaces eficientes.</p>
                 </div>
 
-                <div class="cartao habilidade-hard">
+                <div class="cartao habilidade-hard cursor-link-button inverso">
                     <svg viewBox="0 0 24 24">
                         <circle cx="12" cy="12" r="10"></circle>
                     </svg>
@@ -273,7 +285,7 @@
                     <p>Desenvolvimento backend escalável.</p>
                 </div>
 
-                <div class="cartao habilidade-hard">
+                <div class="cartao habilidade-hard cursor-link-button inverso">
                     <svg viewBox="0 0 24 24">
                         <circle cx="12" cy="12" r="10"></circle>
                     </svg>
@@ -281,7 +293,7 @@
                     <p>Controle de versão profissional.</p>
                 </div>
 
-                <div class="cartao habilidade-hard">
+                <div class="cartao habilidade-hard cursor-link-button inverso">
                     <svg viewBox="0 0 24 24">
                         <circle cx="12" cy="12" r="10"></circle>
                     </svg>
@@ -289,7 +301,7 @@
                     <p>Prototipagem e design UI/UX.</p>
                 </div>
 
-                <div class="cartao habilidade-hard">
+                <div class="cartao habilidade-hard cursor-link-button inverso">
                     <svg viewBox="0 0 24 24">
                         <circle cx="12" cy="12" r="10"></circle>
                     </svg>
@@ -611,7 +623,7 @@
     </main>
 
     <!-- Seção de Contato -->
-    <main id="contato">
+    <main id="contato" class="inverso">
         <div class="tit-cont">
             <h3>Contato</h3>
             <div class="sublinhado" id="cont-subli"></div>
@@ -653,9 +665,6 @@
     <footer id="footer">
         <p>© 2025 Kalil Felipe • Todos os direitos reservados</p>
     </footer>
-
-
-
 </body>
 
 </html>
