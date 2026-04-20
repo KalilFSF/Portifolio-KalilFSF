@@ -205,6 +205,8 @@ addEventListener('DOMContentLoaded', () => {
         particleSystem.createParticles();
     }
 
+    iniciarRaspadinha();
+
     function updateParticleColors() {
         const newColors = body.classList.contains('dark-mode') ? darkColors : lightColors;
         config.colors = newColors;
@@ -221,6 +223,7 @@ addEventListener('DOMContentLoaded', () => {
         }
         updateParticleColors();
         drawLines();
+        iniciarRaspadinha();
     });
 
 
@@ -462,26 +465,57 @@ addEventListener('DOMContentLoaded', () => {
         linhaMarker.style.opacity = 1;
     }
 
+    function animarTroca(cardsOcultar, cardsMostrar) {
+        cardsOcultar.forEach(card => {
+            card.classList.remove("entrando", "visivel");
+            card.classList.add("saindo");
+        });
+
+        setTimeout(() => {
+            cardsOcultar.forEach(card => {
+                card.style.display = "none";
+                card.classList.remove("saindo");
+            });
+
+            cardsMostrar.forEach(card => {
+                card.style.display = "block";
+                card.classList.add("entrando");
+            });
+
+            requestAnimationFrame(() => {
+                cardsMostrar.forEach(card => {
+                    card.classList.remove("entrando");
+                    card.classList.add("visivel");
+                });
+            });
+
+            setTimeout(iniciarRaspadinha, 120);
+
+        }, 250);
+    }
+
     function mostrarSoft() {
         botaoSoft.classList.add("ativo");
         botaoHard.classList.remove("ativo");
-        habilidadesSoft.forEach(el => el.style.display = "block");
-        habilidadesHard.forEach(el => el.style.display = "none");
         botaoAtivo = botaoSoft;
         atualizarLinha(botaoSoft);
+
+        animarTroca(habilidadesHard, habilidadesSoft);
     }
 
     function mostrarHard() {
         botaoHard.classList.add("ativo");
         botaoSoft.classList.remove("ativo");
-        habilidadesSoft.forEach(el => el.style.display = "none");
-        habilidadesHard.forEach(el => el.style.display = "block");
         botaoAtivo = botaoHard;
         atualizarLinha(botaoHard);
+
+        animarTroca(habilidadesSoft, habilidadesHard);
     }
 
     botaoSoft.addEventListener("click", mostrarSoft);
     botaoHard.addEventListener("click", mostrarHard);
+
+    setTimeout(iniciarRaspadinha, 50);
 
     // Atualiza posição em resize (responsivo)
     window.addEventListener("resize", () => {
@@ -490,6 +524,50 @@ addEventListener('DOMContentLoaded', () => {
 
     // Inicializa com Soft ativo
     mostrarSoft();
+
+    /* javascript.js */
+    /* ADICIONE depois de mostrarSoft(); */
+
+    const coinToggle = document.getElementById("coinToggle");
+    let cardsOpened = false;
+
+    function atualizarEstadoMoeda() {
+    document.body.classList.toggle("cards-open", cardsOpened);
+    coinToggle.classList.toggle("flipped", cardsOpened);
+
+    /* animação em TODOS os canvases ao abrir e fechar */
+    const canvases = document.querySelectorAll(".scratch-canvas");
+
+    canvases.forEach((canvas, index) => {
+        canvas.style.transition = "none";
+        canvas.style.transform = "scale(.95)";
+        canvas.style.opacity = cardsOpened ? "1" : "0";
+
+        setTimeout(() => {
+            canvas.style.transition =
+                "transform .45s cubic-bezier(.22,1,.36,1), opacity .45s ease";
+
+            canvas.style.transform = "scale(1)";
+            canvas.style.opacity = cardsOpened ? "0" : "1";
+        }, 20 + (index * 40));
+    });
+}
+
+    coinToggle.addEventListener("click", () => {
+        cardsOpened = !cardsOpened;
+        atualizarEstadoMoeda();
+    });
+
+    /* sempre que recriar a raspadinha mantém estado */
+    const iniciarRaspadinhaOriginal = iniciarRaspadinha;
+
+    iniciarRaspadinha = function () {
+        iniciarRaspadinhaOriginal();
+
+        if (cardsOpened) {
+            document.body.classList.add("cards-open");
+        }
+    };
 
     // ===================================
     // 6. LÓGICA DO EFEITO MOUSE-FOLLOW (GSAP)
@@ -504,25 +582,25 @@ addEventListener('DOMContentLoaded', () => {
         // Listener de movimento de mouse APENAS na div alvo
         alternarHabilidades.addEventListener("mousemove", (evt) => {
 
-    const rect = alternarHabilidades.getBoundingClientRect();
+            const rect = alternarHabilidades.getBoundingClientRect();
 
-    const mouseX = evt.clientX - rect.left;
-    const mouseY = evt.clientY - rect.top;
+            const mouseX = evt.clientX - rect.left;
+            const mouseY = evt.clientY - rect.top;
 
-    gsap.set(bgEffectCursor, {
-        x: mouseX,
-        y: mouseY
-    });
+            gsap.set(bgEffectCursor, {
+                x: mouseX,
+                y: mouseY
+            });
 
-    gsap.to(bgEffectShapes, {
-        x: mouseX,
-        y: mouseY,
-        stagger: -0.08,
-        ease: "power2.out",
-        duration: 0.45
-    });
+            gsap.to(bgEffectShapes, {
+                x: mouseX,
+                y: mouseY,
+                stagger: -0.08,
+                ease: "power2.out",
+                duration: 0.45
+            });
 
-});
+        });
 
         // Efeito de aparecer/desaparecer ao entrar e sair
         alternarHabilidades.addEventListener("mouseenter", () => {
@@ -735,28 +813,29 @@ addEventListener('DOMContentLoaded', () => {
 // ==================================
 // CURSOR COLOR CHANGE IN CONTACT SECTION
 // ==================================
-const contactSection = document.getElementById('contato');
+const inverso = document.querySelectorAll('.inverso');
 const pointerMain = document.getElementById('custom-pointer');
 const pointerTrail = document.getElementById('custom-pointer-trail');
 
-// Cores originais (para restaurar depois)
-// Detecta quando o mouse entra na seção de contato
-contactSection.addEventListener('mouseenter', () => {
-    pointerMain.style.setProperty('background-color', 'var(--mouse-eye-conts)');
-    pointerTrail.style.setProperty('background-color', 'var(--mouse-conts)');
-});
+inverso.forEach(section => {
 
-// Detecta quando o mouse sai da seção de contato
-contactSection.addEventListener('mouseleave', () => {
-    pointerMain.style.setProperty('background-color', 'var(--mouse-eye-color)');
-    pointerTrail.style.setProperty('background-color', 'var(--mouse-color)');
+    section.addEventListener('mouseenter', () => {
+        pointerMain.style.setProperty('background-color', 'var(--mouse-eye-conts)');
+        pointerTrail.style.setProperty('background-color', 'var(--mouse-conts)');
+    });
+
+    section.addEventListener('mouseleave', () => {
+        pointerMain.style.setProperty('background-color', 'var(--mouse-eye-color)');
+        pointerTrail.style.setProperty('background-color', 'var(--mouse-color)');
+    });
+
 });
 
 const form = document.getElementById('form-contato');
 
-form.addEventListener('submit', function(event) {
+form.addEventListener('submit', function (event) {
     // 1. Impede o envio padrão do formulário (que causa o erro POST)
-    event.preventDefault(); 
+    event.preventDefault();
 
     // 2. Coleta os dados (opcional)
     const nome = document.getElementById('nome').value;
@@ -775,11 +854,11 @@ let telefone = document.getElementById("telefone")
 telefone.addEventListener("input", () => {
     let telefone = document.getElementById("telefone").value
     telefone = telefone.slice(0, 15)
-      document.getElementById("telefone").value = telefone
+    document.getElementById("telefone").value = telefone
 
     if (telefone[0] != "(") {
         if (telefone[0] != undefined) {
-           document.getElementById("telefone").value = telefone.slice(0, 0) + "(" + telefone.slice(0)
+            document.getElementById("telefone").value = telefone.slice(0, 0) + "(" + telefone.slice(0)
         }
     }
     if (telefone[3] != ")") {
@@ -799,75 +878,187 @@ telefone.addEventListener("input", () => {
     }
 });
 
-const foto = document.querySelector(".foto");
-const canvas = document.getElementById("scratchCanvas");
-const ctx = canvas.getContext("2d");
+const container = document.getElementById("fotoContainer");
+const topo = document.getElementById("imgTopo");
 
-let overlayVisible = true;
+let aberto = false; // controla estado
 
-function resizeCanvas() {
-    canvas.width = foto.offsetWidth;
-    canvas.height = foto.offsetHeight;
-    drawOverlay();
-}
+// 🔹 Mouse follow (efeito spotlight)
+container.addEventListener("mousemove", (e) => {
+    const rect = container.getBoundingClientRect();
 
-function drawOverlay() {
-    ctx.globalCompositeOperation = "source-over";
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
 
-    const img = new Image();
-    img.src = "imgs/27.png"; // IMAGEM DE CIMA
-
-    img.onload = () => {
-        ctx.clearRect(0,0,canvas.width,canvas.height);
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-    };
-}
-
-function reveal(x, y) {
-    if (!overlayVisible) return;
-
-    ctx.globalCompositeOperation = "destination-out";
-
-    const radius = 45;
-
-    const gradient = ctx.createRadialGradient(
-        x, y, 0,
-        x, y, radius
-    );
-
-    gradient.addColorStop(0, "rgba(0,0,0,1)");
-    gradient.addColorStop(1, "rgba(0,0,0,0)");
-
-    ctx.fillStyle = gradient;
-
-    ctx.beginPath();
-    ctx.arc(x, y, radius, 0, Math.PI * 2);
-    ctx.fill();
-}
-
-canvas.addEventListener("mousemove", (e) => {
-    const rect = canvas.getBoundingClientRect();
-
-    reveal(
-        e.clientX - rect.left,
-        e.clientY - rect.top
-    );
+    topo.style.setProperty("--x", `${x}px`);
+    topo.style.setProperty("--y", `${y}px`);
 });
 
-canvas.addEventListener("click", () => {
+// 🔹 Clique → animação radial
+container.addEventListener("click", (e) => {
+    const rect = container.getBoundingClientRect();
 
-    overlayVisible = !overlayVisible;
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
 
-    if (!overlayVisible) {
-        ctx.clearRect(0,0,canvas.width,canvas.height);
+    topo.style.setProperty("--x", `${x}px`);
+    topo.style.setProperty("--y", `${y}px`);
+
+    if (!aberto) {
+        expandirMascara();
     } else {
-        drawOverlay();
+        contrairMascara();
     }
+
+    aberto = !aberto;
 });
 
-window.addEventListener("resize", resizeCanvas);
+// 🔥 animação expandir
+function expandirMascara() {
+    let radius = 0;
 
-resizeCanvas();
+    const max = Math.sqrt(
+        container.offsetWidth ** 2 + container.offsetHeight ** 2
+    );
+
+    const anim = setInterval(() => {
+        radius += 20;
+        topo.style.setProperty("--r", `${radius}px`);
+
+        if (radius >= max) clearInterval(anim);
+    }, 10);
+}
+
+// 🔥 animação contrair (invertida)
+function contrairMascara() {
+    let radius = Math.sqrt(
+        container.offsetWidth ** 2 + container.offsetHeight ** 2
+    );
+
+    const anim = setInterval(() => {
+        radius -= 20;
+        topo.style.setProperty("--r", `${radius}px`);
+
+        if (radius <= 0) clearInterval(anim);
+    }, 10);
+}
+
+function drawCoverImage(ctx, img, canvas) {
+    const canvasRatio = canvas.width / canvas.height;
+    const imgRatio = img.width / img.height;
+
+    let drawWidth, drawHeight, offsetX, offsetY;
+
+    if (imgRatio > canvasRatio) {
+        drawHeight = canvas.height;
+        drawWidth = img.width * (canvas.height / img.height);
+        offsetX = (canvas.width - drawWidth) / 2;
+        offsetY = 0;
+    } else {
+        drawWidth = canvas.width;
+        drawHeight = img.height * (canvas.width / img.width);
+        offsetX = 0;
+        offsetY = (canvas.height - drawHeight) / 2;
+    }
+
+    ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+}
+
+function iniciarRaspadinha() {
+    const cards = document.querySelectorAll(".cartao");
+
+    cards.forEach(card => {
+        const oldCanvas = card.querySelector(".scratch-canvas");
+        if (oldCanvas) oldCanvas.remove();
+
+        const canvas = document.createElement("canvas");
+        canvas.classList.add("scratch-canvas");
+
+        const ctx = canvas.getContext("2d");
+        card.appendChild(canvas);
+
+        const resizeCanvas = () => {
+            const width = card.offsetWidth;
+            const height = card.offsetHeight;
+
+            if (width === 0 || height === 0) return;
+
+            canvas.width = width;
+            canvas.height = height;
+
+            const isDark = document.body.classList.contains("dark-mode");
+
+            const img = new Image();
+            img.src = isDark
+                ? "imgs/raspar-noite.png"
+                : "imgs/raspar-dia.png";
+
+            img.onload = () => {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                drawCoverImage(ctx, img, canvas);
+            };
+        };
+
+        resizeCanvas();
+
+        let drawing = false;
+
+        function raspar(x, y) {
+            ctx.globalCompositeOperation = "destination-out";
+
+            const gradient = ctx.createRadialGradient(x, y, 0, x, y, 30);
+            gradient.addColorStop(0, "rgba(0,0,0,1)");
+            gradient.addColorStop(1, "rgba(0,0,0,0)");
+
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(x, y, 30, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function getPos(e) {
+            const rect = canvas.getBoundingClientRect();
+
+            const touch = e.touches ? e.touches[0] : e;
+
+            return {
+                x: touch.clientX - rect.left,
+                y: touch.clientY - rect.top
+            };
+        }
+
+        function start(e) {
+            drawing = true;
+            const pos = getPos(e);
+            raspar(pos.x, pos.y);
+        }
+
+        function move(e) {
+            if (!drawing) return;
+            e.preventDefault();
+
+            const pos = getPos(e);
+            raspar(pos.x, pos.y);
+        }
+
+        function end() {
+            drawing = false;
+        }
+
+        canvas.addEventListener("mousedown", start);
+        canvas.addEventListener("mousemove", move);
+        canvas.addEventListener("mouseup", end);
+        canvas.addEventListener("mouseleave", end);
+
+        canvas.addEventListener("touchstart", start, { passive: false });
+        canvas.addEventListener("touchmove", move, { passive: false });
+        canvas.addEventListener("touchend", end);
+
+        window.addEventListener("resize", resizeCanvas);
+    });
+}
+
+
 
 // ==================================
 // 8. TRADUÇÃO PORTUGUÊS/INGLÊS
@@ -885,24 +1076,24 @@ const translations = {
         projetos: "Projetos",
         contato: "Contato",
         resume: "Currículo",
-        
+
         // Header
         ola: "Olá! Eu sou",
         slogan: "Um Desenvolvedor de Softwares que Busca Resolver.",
         verProjetos: "Ver Projetos",
         entreContato: "Entre em Contato",
-        
+
         // Sobre Mim
         sobreMimTitulo: "Sobre Mim",
         sobreMimTexto1: "Eu sou o Kalil, um estudante de 16 anos, que está atualmente no 2º ano do ensino médio técnico do COTEMIG. Atuo na área de TI, com foco em criação de Softwares/Sites e Agentes de IA para automação.",
         sobreMimTexto2: "Meu perfil comportamental é Analista e Planejador, gosto de compreender a lógica por traz das coisas e das pessoas ao meu redor, e posso dizer que sou alguém bastante observador.",
         sobreMimTexto3: "Tenho experiência em HTML/CSS/JS, MySQL, C#, N8N entre outras habilidades que você poderá ver na aba Skills, então não tenha pressa.",
-        
+
         // Skills
         minhasSkills: "Minhas Skills",
         softSkills: "Soft Skills",
         hardSkills: "Hard Skills",
-        
+
         // Soft Skills
         comunicacao: "Comunicação",
         comunicacaoDesc: "Se expressar bem e ouvir com atenção.",
@@ -920,7 +1111,7 @@ const translations = {
         adaptabilidadeDesc: "Saber se ajustar a mudanças rápidas.",
         resiliencia: "Resiliência",
         resilienciaDesc: "Manter a calma sob pressão.",
-        
+
         // Hard Skills
         html: "HTML",
         htmlDesc: "Estrutura semântica e acessível.",
@@ -938,13 +1129,13 @@ const translations = {
         figmaDesc: "Prototipagem e design UI/UX.",
         sql: "SQL",
         sqlDesc: "Gerenciamento de banco de dados.",
-        
+
         // Projetos
         projetosTitulo: "Projetos",
         iniciarViagem: "Iniciar Viagem",
         fazerViagemNovamente: "Fazer Viagem Novamente",
         viajando: "Viajando...",
-        
+
         // Contato
         contatoTitulo: "Contato",
         nome: "Nome",
@@ -957,10 +1148,10 @@ const translations = {
         mensagemPlaceholder: "Escreva sua mensagem aqui...",
         enviar: "Enviar",
         ou: "ou",
-        
+
         // Footer
         footer: "© 2025 Kalil Felipe • Todos os direitos reservados",
-        
+
         // Botões
         curriculo: "Currículo",
         idioma: "PT"
@@ -972,24 +1163,24 @@ const translations = {
         projetos: "Projects",
         contato: "Contact",
         resume: "Resume/CV",
-        
+
         // Header
         ola: "Hello! I'm",
         slogan: "A Software Developer Who Seeks to Solve.",
         verProjetos: "View Projects",
         entreContato: "Get in Touch",
-        
+
         // About Me
         sobreMimTitulo: "About Me",
         sobreMimTexto1: "I'm Kalil, a 16-year-old student currently in the 2nd year of technical high school at COTEMIG. I work in the IT field, focusing on Software/Website creation and AI Agents for automation.",
         sobreMimTexto2: "My behavioral profile is Analyst and Planner, I enjoy understanding the logic behind things and people around me, and I can say I'm quite observant.",
         sobreMimTexto3: "I have experience in HTML/CSS/JS, MySQL, C#, N8N among other skills you can see in the Skills section, so take your time.",
-        
+
         // Skills
         minhasSkills: "My Skills",
         softSkills: "Soft Skills",
         hardSkills: "Hard Skills",
-        
+
         // Soft Skills
         comunicacao: "Communication",
         comunicacaoDesc: "Express yourself well and listen carefully.",
@@ -1007,7 +1198,7 @@ const translations = {
         adaptabilidadeDesc: "Know how to adjust to rapid changes.",
         resiliencia: "Resilience",
         resilienciaDesc: "Stay calm under pressure.",
-        
+
         // Hard Skills
         html: "HTML",
         htmlDesc: "Semantic and accessible structure.",
@@ -1025,13 +1216,13 @@ const translations = {
         figmaDesc: "Prototyping and UI/UX design.",
         sql: "SQL",
         sqlDesc: "Database management.",
-        
+
         // Projects
         projetosTitulo: "Projects",
         iniciarViagem: "Start Journey",
         fazerViagemNovamente: "Take Journey Again",
         viajando: "Traveling...",
-        
+
         // Contact
         contatoTitulo: "Contact",
         nome: "Name",
@@ -1044,10 +1235,10 @@ const translations = {
         mensagemPlaceholder: "Write your message here...",
         enviar: "Send",
         ou: "or",
-        
+
         // Footer
         footer: "© 2025 Kalil Felipe • All rights reserved",
-        
+
         // Buttons
         curriculo: "CV",
         idioma: "EN"
@@ -1057,32 +1248,32 @@ const translations = {
 // Função para aplicar tradução
 function applyTranslation(language) {
     const texts = translations[language];
-    
+
     // Navegação
     document.querySelector('a[href="#sobre_mim"]').textContent = texts.sobreMim;
     document.querySelector('a[href="#skills"]').textContent = texts.skills;
     document.querySelector('a[href="#projetos"]').textContent = texts.projetos;
     document.querySelector('a[href="#contato"]').textContent = texts.contato;
     document.querySelector('.curriculo-mobile').textContent = texts.resume;
-    
+
     // Header
     document.querySelector('#titulo-espaco h2').textContent = texts.ola;
     document.querySelector('.slogan').textContent = texts.slogan;
     document.querySelector('.action-buttons a[href="#projetos"]').textContent = texts.verProjetos;
     document.querySelector('.action-buttons a[href="#contato"]').textContent = texts.entreContato;
-    
+
     // Sobre Mim
     document.querySelector('#sobre_mim .titulo h3').textContent = texts.sobreMimTitulo;
     const sobreMimTextos = document.querySelectorAll('#sobre_mim .texto p');
     sobreMimTextos[0].textContent = texts.sobreMimTexto1;
     sobreMimTextos[1].textContent = texts.sobreMimTexto2;
     sobreMimTextos[2].textContent = texts.sobreMimTexto3;
-    
+
     // Skills
     document.querySelector('.tit-ski h3').textContent = texts.minhasSkills;
     document.getElementById('botaoSoft').textContent = texts.softSkills;
     document.getElementById('botaoHard').textContent = texts.hardSkills;
-    
+
     // Soft Skills
     const softSkillsCards = document.querySelectorAll('.habilidade-soft');
     softSkillsCards[0].querySelector('h3').textContent = texts.comunicacao;
@@ -1101,7 +1292,7 @@ function applyTranslation(language) {
     softSkillsCards[6].querySelector('p').textContent = texts.adaptabilidadeDesc;
     softSkillsCards[7].querySelector('h3').textContent = texts.resiliencia;
     softSkillsCards[7].querySelector('p').textContent = texts.resilienciaDesc;
-    
+
     // Hard Skills
     const hardSkillsCards = document.querySelectorAll('.habilidade-hard');
     hardSkillsCards[0].querySelector('h3').textContent = texts.html;
@@ -1120,7 +1311,7 @@ function applyTranslation(language) {
     hardSkillsCards[6].querySelector('p').textContent = texts.figmaDesc;
     hardSkillsCards[7].querySelector('h3').textContent = texts.sql;
     hardSkillsCards[7].querySelector('p').textContent = texts.sqlDesc;
-    
+
     // Projetos
     document.querySelector('.espa-proj h3').textContent = texts.projetosTitulo;
     const toggleButton = document.getElementById('toggle-button');
@@ -1131,7 +1322,7 @@ function applyTranslation(language) {
     } else if (toggleButton.textContent.includes('Viajando') || toggleButton.textContent.includes('Traveling')) {
         toggleButton.textContent = texts.viajando;
     }
-    
+
     // Contato
     document.querySelector('.tit-cont h3').textContent = texts.contatoTitulo;
     document.querySelector('label[for="nome"]').textContent = texts.nome;
@@ -1144,14 +1335,14 @@ function applyTranslation(language) {
     document.getElementById('mensagem').placeholder = texts.mensagemPlaceholder;
     document.getElementById('btn-enviar').textContent = texts.enviar;
     document.querySelector('#area-cont span').textContent = texts.ou;
-    
+
     // Footer
     document.querySelector('#footer p').textContent = texts.footer;
-    
+
     // Botões
     document.getElementById('resumeText').textContent = texts.curriculo;
     languageText.textContent = texts.idioma;
-    
+
     // Salvar preferência
     localStorage.setItem('language', language);
 }
