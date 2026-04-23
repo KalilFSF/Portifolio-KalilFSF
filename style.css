@@ -1065,7 +1065,7 @@ h3 {
     }
 
     #espa-grid {
-        padding: 0px;
+        padding: 0px 1.5rem;
     }
 
     .cartao {
@@ -1174,6 +1174,67 @@ h3 {
 
 .espa-proj {
     margin: 0% calc(5vw + 30px);
+}
+
+.tit-proj {
+    display: flex;
+
+    align-items: flex-end; /* 🔥 joga tudo pra baixo */
+
+    justify-content: space-between;
+}
+
+.travel-button {
+    width: 64px;
+    height: 64px;
+    aspect-ratio: 1 / 1; /* 🔥 garante quadrado sempre */
+    
+    border: none;
+    background: transparent;
+    padding: 0;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 4px;
+}
+
+.travel-button:hover {
+    transform: translateY(-2px);
+}
+
+.travel-button:active {
+    transform: scale(.96);
+}
+
+.travel-inner {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 🔁 animação contínua */
+@keyframes girar {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* 🔥 classe ativada no clique */
+.travel-button.ativo .travel-inner {
+    animation: girar 3s linear infinite;
+}
+
+.travel-icon {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: drop-shadow(0 12px 25px rgba(0,0,0,0.12));
 }
 
 #noite-estrelada {
