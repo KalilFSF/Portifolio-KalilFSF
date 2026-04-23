@@ -1,1396 +1,2670 @@
-// Use DOMContentLoaded para garantir que todos os elementos HTML (incluindo o canvas) estejam carregados
-addEventListener('DOMContentLoaded', () => {
+/* Variaveis de Tema (Claro/Escuro) */
+:root {
+    --bg-page: #EBE3D4;
+    --bg-page-50: #EBE3D480;
+    --bg-nav: rgba(255, 249, 243, 0.55);
 
-    // ==================================
-    // 1. CLASSE PARTICLE (PARTÍCULA)
-    // ==================================
-    class Particle {
-        constructor(x, y, radius, color, velocity) {
-            this.x = x;
-            this.y = y;
-            this.radius = radius;
-            this.color = color;
-            this.velocity = velocity;
-            this.alpha = 0.8;
-        }
+    --text-primary: #543036;
+    --text-secondary: #78403C;
 
-        draw(ctx) {
-            ctx.save();
-            ctx.globalAlpha = this.alpha;
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
-            ctx.fillStyle = this.color;
-            ctx.fill();
-            ctx.restore();
-        }
+    --color-select: #663839f5;
+    --color-select-30: #6638394d;
 
-        update(width, height) {
-            this.x += this.velocity.x;
-            this.y += this.velocity.y;
+    --color-mobile: #4d2c32;
 
-            if (this.x - this.radius > width) {
-                this.x = -this.radius;
-            } else if (this.y + this.radius < 0) {
-                this.y = height + this.radius;
-            }
-        }
-    }
+    --mouse-color: #22284f8c;
+    --mouse-eye-color: #22284ff2;
 
-    // ==================================
-    // 2. CLASSE PARTICLESYSTEM (SISTEMA)
-    // ==================================
-    class ParticleSystem {
-        constructor(canvasId, config) {
-            this.canvas = document.getElementById(canvasId);
-            if (!this.canvas) return;
-            this.ctx = this.canvas.getContext('2d');
-            this.config = config;
-            this.particles = [];
-            this.mouse = { x: null, y: null, radius: 100 };
+    --img-vitral: url('imgs/vitral-dia.png');
 
-            this.init();
-            this.animate();
-        }
+    --img-raspadinha: url('imgs/raspar-dia.png');
+    --color-cartao: #663836;
 
-        init() {
-            this.resizeCanvas();
-            this.createParticles();
-            this.addEventListeners();
-        }
+    --img-ceu: url('imgs/fundo-claro.png');
+    --img-montanha: url('imgs/montanha-claro.png');
+    --img-rua: url('imgs/estrada-clara.png');
 
-        resizeCanvas() {
-            this.canvas.width = this.canvas.offsetWidth;
-            this.canvas.height = this.canvas.offsetHeight;
-        }
+    --cor-veiculo: #d78d58c9;
+    --img-carro: url('imgs/carro-claro.png');
+    --img-moto: url('imgs/moto-clara.png');
+    --img-viagem: url('imgs/viagem-claro.png');
+    --img-onibus: url('imgs/onibus-claro.png');
 
-        createParticles() {
-            const { particleCount, minRadius, maxRadius, colors, speed } = this.config;
-            this.particles = [];
+    --cor-estrelas: #E4A152;
 
-            for (let i = 0; i < particleCount; i++) {
-                const radius = Math.random() * (maxRadius - minRadius) + minRadius;
-                const x = Math.random() * this.canvas.width;
-                const y = Math.random() * this.canvas.height;
-                const color = colors[Math.floor(Math.random() * colors.length)];
+    --input-select: rgba(192, 248, 255, 0.596);
 
-                const velocity = {
-                    x: Math.random() * speed * 0.8 + 0.1,
-                    y: -(Math.random() * speed * 0.8 + 0.1)
-                };
+    --mouse-conts: #EBE3D48c;
+    --mouse-eye-conts: #EBE3D4f2;
 
-                this.particles.push(new Particle(x, y, radius, color, velocity));
-            }
-        }
-
-        addEventListeners() {
-            window.addEventListener('resize', () => {
-                this.resizeCanvas();
-                this.createParticles();
-            });
-
-            if (this.config.interactive) {
-                const updateMousePosition = (clientX, clientY) => {
-                    const rect = this.canvas.getBoundingClientRect();
-                    const NON_INTERACTIVE_ELEMENTS_ID = ['mainCanvas', 'interacao'];
-                    const topElement = document.elementFromPoint(clientX, clientY);
-
-                    if (topElement) {
-                        let isOverBlockingElement = true;
-                        if (topElement.closest(`#${NON_INTERACTIVE_ELEMENTS_ID[0]}`) ||
-                            topElement.closest(`#${NON_INTERACTIVE_ELEMENTS_ID[1]}`)) {
-                            isOverBlockingElement = false;
-                        }
-                        if (isOverBlockingElement) {
-                            this.mouse.x = null;
-                            this.mouse.y = null;
-                            return;
-                        }
-                    }
-
-                    this.mouse.x = clientX - rect.left;
-                    this.mouse.y = clientY - rect.top;
-
-                    if (this.mouse.x < 0 || this.mouse.x > this.canvas.width ||
-                        this.mouse.y < 0 || this.mouse.y > this.canvas.height) {
-                        this.mouse.x = null;
-                        this.mouse.y = null;
-                    }
-                };
-
-                window.addEventListener('mousemove', (event) => {
-                    updateMousePosition(event.clientX, event.clientY);
-                });
-
-                window.addEventListener('touchmove', (event) => {
-                    if (event.touches.length > 0) {
-                        const touch = event.touches[0];
-                        updateMousePosition(touch.clientX, touch.clientY);
-                        event.preventDefault();
-                    }
-                });
-
-                window.addEventListener('touchend', () => {
-                    this.mouse.x = null;
-                    this.mouse.y = null;
-                });
-
-                window.addEventListener('mouseup', () => {
-                    this.mouse.x = null;
-                    this.mouse.y = null;
-                });
-            }
-        }
-
-        animate = () => {
-            requestAnimationFrame(this.animate);
-            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-            this.particles.forEach(particle => {
-                particle.update(this.canvas.width, this.canvas.height);
-                particle.draw(this.ctx);
-
-                if (this.config.interactive && this.mouse.x !== null) {
-                    const dx = this.mouse.x - particle.x;
-                    const dy = this.mouse.y - particle.y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-
-                    if (distance < this.mouse.radius) {
-                        const forceDirectionX = dx / distance;
-                        const forceDirectionY = dy / distance;
-                        const repulsionStrength = 0.1;
-
-                        particle.velocity.x -= forceDirectionX * (repulsionStrength * (1 - distance / this.mouse.radius));
-                        particle.velocity.y -= forceDirectionY * (repulsionStrength * (1 - distance / this.mouse.radius));
-                    }
-                }
-
-                const maxSpeed = 1.6;
-                const speed = Math.sqrt(particle.velocity.x * particle.velocity.x + particle.velocity.y * particle.velocity.y);
-                if (speed > maxSpeed) {
-                    particle.velocity.x = (particle.velocity.x / speed) * maxSpeed;
-                    particle.velocity.y = (particle.velocity.y / speed) * maxSpeed;
-                }
-            });
-        }
-    }
-
-    // ==================================
-    // 3. CONFIGURAÇÃO E INICIALIZAÇÃO DO SISTEMA DE PARTÍCULAS
-    // ==================================
-    const lightColors = ['#EDC687', '#D78D58', '#BD6246'];
-    const darkColors = ['#C0F8FF', '#34C6BC', '#536BB2'];
-
-    const config = {
-        particleCount: 150,
-        minRadius: 3.1,
-        maxRadius: 7,
-        speed: 1,
-        colors: lightColors,
-        interactive: true
-    };
-
-    const particleSystem = new ParticleSystem('mainCanvas', config);
-
-    // ==================================
-    // 5. MODO ESCURO (ATUALIZADO)
-    // ==================================
-    const toggle = document.getElementById('darkModeToggle');
-    const body = document.body;
-
-    const savedMode = localStorage.getItem('darkMode');
-    if (savedMode === 'true') {
-        body.classList.add('dark-mode');
-        toggle.checked = true;
-        config.colors = darkColors;
-        particleSystem.createParticles();
-    }
-
-    iniciarRaspadinha();
-    updateIconsForTheme();
-
-    function updateParticleColors() {
-        const newColors = body.classList.contains('dark-mode') ? darkColors : lightColors;
-        config.colors = newColors;
-        particleSystem.createParticles();
-    }
-
-    toggle.addEventListener('change', () => {
-        if (toggle.checked) {
-            body.classList.add('dark-mode');
-            localStorage.setItem('darkMode', 'true');
-        } else {
-            body.classList.remove('dark-mode');
-            localStorage.setItem('darkMode', 'false');
-        }
-        updateParticleColors();
-        drawLines();
-        iniciarRaspadinha();
-        updateIconsForTheme();
-    });
-
-
-    // ==================================
-    // 4. LÓGICA DA LINHA DE MENU (MARKER UNDERLINE) - MODIFICADA
-    // ==================================
-    const marker = document.getElementById('marker');
-    const navLinks = document.querySelectorAll('.nav-links a');
-    let activeLink = null; // Começa sem link ativo
-    let isHovering = false; // Controla se o mouse está sobre algum link
-
-    // Função que move o marcador para a posição do elemento
-    function updateMarker(element, show = true) {
-        if (!marker || !element) {
-            // Oculta o marcador se não houver elemento de destino válido
-            marker.style.width = '0px';
-            marker.style.opacity = 0;
-            return;
-        }
-
-        // Calcula as posições relativas ao elemento pai do marker (que é o <nav>)
-        const nav = marker.parentElement;
-        if (!nav) return;
-
-        // Posição do link e do nav em relação à viewport
-        const linkRect = element.getBoundingClientRect();
-        const navRect = nav.getBoundingClientRect();
-
-        // Largura e posição X relativa dentro do nav
-        const newWidth = linkRect.width;
-        // Posição X (horizontal) do link menos a posição X do NAV
-        const newX = linkRect.left - navRect.left;
-
-        // Cálculo da posição vertical (Y)
-        const newY = linkRect.bottom - navRect.top - 5;
-
-        // Aplica a transformação
-        marker.style.width = `${newWidth}px`;
-        marker.style.transform = `translate(${newX}px, ${newY}px)`;
-        marker.style.opacity = show ? 1 : 0; // Controla a visibilidade
-
-        if (show) {
-            activeLink = element;
-        }
-    }
-
-    // Função para encontrar e mover para o link ativo (baseado no hash da URL)
-    function moveToActiveLink() {
-        // Tenta usar o hash atual
-        const currentHash = window.location.hash;
-        const targetLink = currentHash ? document.querySelector(`.nav-links a[href="${currentHash}"]`) : null;
-
-        if (targetLink) {
-            updateMarker(targetLink, true);
-            activeLink = targetLink;
-        } else {
-            // Se não encontrar o hash, oculta o marker
-            updateMarker(null, false);
-            activeLink = null;
-        }
-    }
-
-    // Inicializa o marcador na posição correta ao carregar
-    moveToActiveLink();
-
-    // Adiciona o listener para o evento hashchange
-    window.addEventListener('hashchange', moveToActiveLink);
-
-    navLinks.forEach(link => {
-        // Mover o marker ao passar o mouse (hover) - APENAS MOSTRA
-        link.addEventListener('mouseenter', (e) => {
-            isHovering = true;
-            updateMarker(e.target, true);
-        });
-
-        // Restaurar estado ao sair do link - APENAS SE NÃO FOR O LINK ATIVO
-        link.addEventListener('mouseleave', (e) => {
-            isHovering = false;
-
-            // Se não é o link ativo e não estamos clicando, volta para o estado anterior
-            if (activeLink !== e.target) {
-                // Pequeno delay para evitar flickering
-                setTimeout(() => {
-                    if (!isHovering) {
-                        moveToActiveLink();
-                    }
-                }, 50);
-            }
-        });
-
-        // Mover o marker ao clicar no link (mantém o marker visível)
-        link.addEventListener('click', (e) => {
-            updateMarker(e.target, true);
-            activeLink = e.target;
-
-            // Timeout para garantir que o scroll tenha tempo de ocorrer
-            setTimeout(() => {
-                moveToActiveLink();
-            }, 100);
-        });
-
-        // Evento de focus (para acessibilidade via teclado)
-        link.addEventListener('focus', (e) => {
-            updateMarker(e.target, true);
-        });
-
-        // Evento de blur (para acessibilidade via teclado)
-        link.addEventListener('blur', (e) => {
-            if (activeLink !== e.target) {
-                moveToActiveLink();
-            }
-        });
-    });
-
-    // Quando o mouse sai da área de navegação, move o marcador de volta para o link 'ativo'
-    const navElement = document.querySelector('nav');
-    if (navElement) {
-        navElement.addEventListener('mouseleave', () => {
-            isHovering = false;
-            // Só move de volta se não houver um link com foco (teclado)
-            if (!navElement.contains(document.activeElement)) {
-                moveToActiveLink();
-            }
-        });
-    }
-
-    // Lida com o redimensionamento da janela para recalcular a posição
-    window.addEventListener('resize', () => {
-        // Recalcula a posição com base no link ativo
-        moveToActiveLink();
-    });
-
-
-    // ==================================
-    // 6. PONTEIRO PERSONALIZADO
-    // ==================================
-    const pointerMain = document.getElementById('custom-pointer');
-    const pointerTrail = document.getElementById('custom-pointer-trail');
-
-    let mouseX = 0, mouseY = 0;
-    let mainX = 0, mainY = 0;
-    let trailX = 0, trailY = 0;
-
-    let mainSpeed = 0.2;   // Velocidade de resposta da bolinha principal
-    let trailSpeed = 0.08; // Velocidade mais lenta para o rastro
-
-    // Atualiza posição do mouse
-    document.addEventListener('mousemove', (e) => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-    });
-
-    // Anima o movimento das duas bolinhas
-    function animateCursors() {
-        // Movimento suave da bolinha principal
-        mainX += (mouseX - mainX) * mainSpeed;
-        mainY += (mouseY - mainY) * mainSpeed;
-
-        // Movimento mais atrasado da bolinha de trilha
-        trailX += (mouseX - trailX) * trailSpeed;
-        trailY += (mouseY - trailY) * trailSpeed;
-
-        // Centralização automática
-        pointerMain.style.left = `${mainX}px`;
-        pointerMain.style.top = `${mainY}px`;
-
-        pointerTrail.style.left = `${trailX}px`;
-        pointerTrail.style.top = `${trailY}px`;
-
-        requestAnimationFrame(animateCursors);
-    }
-    animateCursors();
-
-    // Efeitos de hover e seleção
-    const linkTargets = document.querySelectorAll('.cursor-link-button');
-    const textTargets = document.querySelectorAll('.cursor-text-box');
-
-    linkTargets.forEach(target => {
-        target.addEventListener('mouseenter', () => {
-            pointerMain.classList.remove('cursor-text-select');
-            pointerMain.classList.add('cursor-hovered');
-            pointerTrail.style.width = '60px';
-            pointerTrail.style.height = '60px';
-            pointerTrail.style.opacity = '0.65';
-            mainSpeed = 0.3;
-        });
-        target.addEventListener('mouseleave', () => {
-            pointerMain.classList.remove('cursor-hovered');
-            pointerTrail.style.width = '40px';
-            pointerTrail.style.height = '40px';
-            pointerTrail.style.opacity = '1';
-            mainSpeed = 0.2;
-        });
-    });
-
-    textTargets.forEach(target => {
-        target.addEventListener('mouseenter', () => {
-            pointerMain.classList.remove('cursor-hovered');
-            pointerMain.classList.add('cursor-text-select');
-            pointerTrail.style.borderRadius = "0px";
-            pointerMain.style.borderRadius = "0px";
-            pointerTrail.style.width = '20px';
-            pointerMain.style.width = '10px';
-            mainSpeed = 0.3;
-        });
-        target.addEventListener('mouseleave', () => {
-            pointerMain.classList.remove('cursor-text-select');
-            pointerTrail.style.borderRadius = "50%";
-            pointerMain.style.borderRadius = "50%";
-            pointerTrail.style.width = '40px';
-            pointerMain.style.width = '20px';
-            mainSpeed = 0.2;
-        });
-    });
-
-
-
-    // ==================================
-    // 7. HABILIDADES (Soft/Hard) — linha dinâmica estilo nav
-    // ==================================
-    const botaoSoft = document.getElementById("botaoSoft");
-    const botaoHard = document.getElementById("botaoHard");
-    const linhaMarker = document.getElementById("linha-marker");
-    const habilidadesSoft = document.querySelectorAll(".habilidade-soft");
-    const habilidadesHard = document.querySelectorAll(".habilidade-hard");
-
-    let botaoAtivo = botaoSoft; // começa com Soft ativo
-
-    function atualizarLinha(elemento) {
-        const container = elemento.parentElement;
-        const rectEl = elemento.getBoundingClientRect();
-        const rectParent = container.getBoundingClientRect();
-
-        const novaLargura = rectEl.width;
-        const novaPosX = rectEl.left - rectParent.left;
-
-        linhaMarker.style.width = `${novaLargura}px`;
-        linhaMarker.style.transform = `translateX(${novaPosX}px)`;
-        linhaMarker.style.opacity = 1;
-    }
-
-    function animarTroca(cardsOcultar, cardsMostrar) {
-        cardsOcultar.forEach(card => {
-            card.classList.remove("entrando", "visivel");
-            card.classList.add("saindo");
-        });
-
-        setTimeout(() => {
-            cardsOcultar.forEach(card => {
-                card.style.display = "none";
-                card.classList.remove("saindo");
-            });
-
-            cardsMostrar.forEach(card => {
-                card.style.display = "block";
-                card.classList.add("entrando");
-            });
-
-            requestAnimationFrame(() => {
-                cardsMostrar.forEach(card => {
-                    card.classList.remove("entrando");
-                    card.classList.add("visivel");
-                });
-            });
-
-            setTimeout(iniciarRaspadinha, 120);
-
-        }, 250);
-    }
-
-    function mostrarSoft() {
-        botaoSoft.classList.add("ativo");
-        botaoHard.classList.remove("ativo");
-        botaoAtivo = botaoSoft;
-        atualizarLinha(botaoSoft);
-
-        animarTroca(habilidadesHard, habilidadesSoft);
-    }
-
-    function mostrarHard() {
-        botaoHard.classList.add("ativo");
-        botaoSoft.classList.remove("ativo");
-        botaoAtivo = botaoHard;
-        atualizarLinha(botaoHard);
-
-        animarTroca(habilidadesSoft, habilidadesHard);
-    }
-
-    botaoSoft.addEventListener("click", mostrarSoft);
-    botaoHard.addEventListener("click", mostrarHard);
-
-    setTimeout(iniciarRaspadinha, 50);
-
-    // Atualiza posição em resize (responsivo)
-    window.addEventListener("resize", () => {
-        if (botaoAtivo) atualizarLinha(botaoAtivo);
-    });
-
-    // Inicializa com Soft ativo
-    mostrarSoft();
-
-    /* javascript.js */
-
-const coinToggle = document.getElementById("coinToggle");
-let cardsOpened = false;
-
-function atualizarEstadoMoeda() {
-    // 1. Aplica a classe ao body e ao botão da moeda
-    document.body.classList.toggle("cards-open", cardsOpened);
-    coinToggle.classList.toggle("flipped", cardsOpened);
-
-    // 2. Animação dos canvases das raspadinhas
-    const canvases = document.querySelectorAll(".scratch-canvas");
-
-    canvases.forEach((canvas, index) => {
-        // Reset inicial para forçar o reinício da transição se necessário
-        canvas.style.transition = "none";
-        canvas.style.transform = "scale(.95)";
-        
-        // Se cardsOpened for true, o canvas deve sumir (opacity 0)
-        // Se for false, o canvas deve aparecer (opacity 1)
-        canvas.style.opacity = cardsOpened ? "1" : "0";
-
-        setTimeout(() => {
-            canvas.style.transition = "transform .45s cubic-bezier(.22,1,.36,1), opacity .45s ease";
-            canvas.style.transform = "scale(1)";
-            canvas.style.opacity = cardsOpened ? "0" : "1";
-        }, 20 + (index * 40));
-    });
+    --modal-shadow: rgba(84, 48, 54, 0.2);
+    --modal-feature-bg: rgba(120, 64, 60, 0.1);
 }
 
-// Evento de clique na moeda
-coinToggle.addEventListener("click", () => {
-    cardsOpened = !cardsOpened;
-    atualizarEstadoMoeda();
-});
+body.dark-mode {
+    --bg-page: #1b1f3b;
+    --bg-page-50: #1b1f3b80;
+    --bg-nav: #0B102Db3;
 
-// Função para atualizar as imagens baseadas no tema (Claro/Escuro)
-function updateIconsForTheme() {
-    const frontIcon = document.querySelector('.coin-face.front .coin-icon');
-    const backIcon = document.querySelector('.coin-face.back .coin-icon');
+    --text-primary: #f5f5f5;
+    --text-secondary: #C0F8FF;
+
+    --color-select: #C0F8FFf5;
+    --color-select-30: #C0F8FF4d;
+
+    --color-mobile: #e2e2e2;
+
+    --mouse-color: #EBE3D48c;
+    --mouse-eye-color: #EBE3D4f2;
+
+    --img-vitral: url('imgs/vitral-noite.png');
+
+    --img-raspadinha: url('imgs/raspar-noite.png');
+    --color-cartao: #cccccc;
+
+    --img-ceu: url('imgs/fundo-escuro.png');
+    --img-montanha: url('imgs/montanha-escuro.png');
+    --img-rua: url('imgs/estrada-escura.png');
+
+    --cor-veiculo: #1f1f20c9;
+    --img-carro: url('imgs/carro-escuro.png');
+    --img-moto: url('imgs/moto-escura.png');
+    --img-viagem: url('imgs/viagem-escuro.png');
+    --img-onibus: url('imgs/onibus-escuro.png');
+
+    --cor-estrelas: #89B1D9;
+
+    --mouse-conts: #22284f8c;
+    --mouse-eye-conts: #22284ff2;
+
+    --input-select: #543036d0;
+
+    --modal-shadow: rgba(192, 248, 255, 0.2);
+    --modal-feature-bg: rgba(192, 248, 255, 0.1);
+
+}
+
+/* Style Geral (Body / Select / Mouse)*/
+
+* {
+    margin: 0;
+    scroll-behavior: smooth;
+    box-sizing: border-box;
+    font-family: "Montserrat", sans-serif;
+    cursor: none;
+    line-height: 1;
+}
+
+body {
+    background-color: var(--bg-page);
+    transition: background-color 0.5s ease;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+::selection {
+    color: var(--bg-page);
+    background-color: var(--color-select);
+}
+
+#contato ::selection {
+    color: var(--color-select);
+    background-color: var(--bg-page);
+}
+
+/* 1. Esconde o cursor padrão do navegador para que o cursor JS funcione */
+.custom-cursor-active {
+    cursor: none;
+}
+
+/* 2. Estilo Padrão do Cursor Falso (o círculo azul) */
+#custom-pointer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 20px;
+    height: 20px;
+    background-color: var(--mouse-eye-color);
+    /* Cor Padrão: Índigo */
+    border-radius: 50%;
+    pointer-events: none;
+    /* ESSENCIAL: Permite que você clique nos elementos por baixo dele */
+    transform: translate(-50%, -50%);
+    /* Centraliza o elemento no ponteiro */
+    z-index: 999999;
+    opacity: 0.8;
+    /* Transições suaves para animação */
+    transition: width 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        height 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        opacity 0.3s ease,
+        background-color 0.3s ease,
+        border-radius 0.3s ease;
+    display: block;
+}
+
+/* Segunda bolinha (trilha) */
+#custom-pointer-trail {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 40px;
+    height: 40px;
+    background-color: var(--mouse-color);
+    /* mesma cor do cursor principal com transparência 0.25*/
+    border-radius: 50%;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    z-index: 999998;
+    transition: width 0.3s, height 0.3s, opacity 0.3s, background-color 0.3s;
+    display: block;
+}
+
+
+
+
+/* Canvas e Particulas */
+
+#mainCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 110%;
+    height: 90vh;
+    z-index: -1;
+}
+
+/* 1º pág: Header */
+
+header {
+    width: 100%;
+    height: 75vh;
+    padding-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Navegador Fixo */
+
+
+#menuespaço {
+    position: fixed;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 1.5vh 1.2vh;
+    flex-direction: column;
+    z-index: 100;
+}
+
+.mobile-curriculo {
+    display: none;
+}
+
+.menu-toggle {
+    display: none;
+    width: 40px;
+    height: 32px;
+    background: transparent;
+    border: none;
+    position: relative;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 0;
+}
+
+.menu-toggle span {
+    display: block;
+    height: 4px;
+    width: 100%;
+    background: var(--text-primary);
+    border-radius: 10px;
+    transition: all 0.35s ease;
+}
+
+.menu-toggle.active span:nth-child(1) {
+    transform: translateY(14px) rotate(45deg);
+}
+
+.menu-toggle.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.menu-toggle.active span:nth-child(3) {
+    transform: translateY(-14px) rotate(-45deg);
+}
+
+nav {
+    background-color: var(--bg-nav);
+    backdrop-filter: blur(3px);
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    padding: 15px 25px;
+    height: auto;
+    min-height: 70px;
+    border-radius: 30px 30px 0px 0px;
+    align-items: center;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease;
+}
+
+/* Linha decorativa do menu */
+
+#marker {
+    position: absolute;
+    left: 25px;
+    width: 0px;
+    height: 5px;
+    background-color: var(--text-primary);
+    border-radius: 2px;
+    transition: transform 0.3s cubic-bezier(0.19, 1, 0.22, 1),
+        width 0.3s cubic-bezier(0.19, 1, 0.22, 1),
+        background-color 0.3s ease,
+        opacity 0.3s ease;
+    pointer-events: none;
+    z-index: 5;
+    opacity: 0;
+    /* Adiciona esta linha para começar invisível */
+}
+
+.borda {
+    width: 100%;
+    height: 6px;
+    background-color: var(--text-primary);
+    border-radius: 10px 10px 0px 0px;
+}
+
+menu {
+    display: flex;
+    align-items: center;
+    padding: 0;
+    list-style-type: none;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.botoes {
+    gap: 0.8rem;
+    flex-shrink: 0;
+}
+
+menu a,
+menu button {
+    text-decoration: none;
+    font-weight: 700;
+    font-size: clamp(1rem, 0.75rem + 0.5vw, 1.25rem);
+    transition: 0.3s;
+    color: var(--text-primary);
+}
+
+.icon-button {
+    border: solid 3px var(--text-primary);
+    background-color: transparent;
+    padding: 6px 10px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    fill: var(--text-primary);
+    transition: 0.3s;
+}
+
+.icon-button:hover {
+    background-color: var(--text-primary);
+    color: var(--bg-page);
+    fill: var(--bg-page);
+}
+
+menu button svg {
+    width: 20px;
+    height: 20px;
+    transition: 0.3s;
+    margin-right: 5px;
+}
+
+/* Botão de Modo Escuro */
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 40px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: #543036 3px solid;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: #543036;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input:checked+.slider {
+    border: #f5f5f5 3px solid;
+}
+
+input:checked+.slider::before {
+    background-color: #f5f5f5;
+}
+
+input:checked+.slider:before {
+    -webkit-transform: translateX(20px);
+    -ms-transform: translateX(20px);
+    transform: translateX(20px);
+}
+
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+
+/* Conteudo do Header */
+
+#titulo-espaco {
+    margin-top: clamp(100px, 20vh, 250px);
+    padding: 0 calc(5vw + 30px);
+    max-width: 1800px;
+    width: 100%;
+    z-index: 10;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 40px;
+}
+
+@media (max-width: 640px) {
+    #titulo-espaco {
+        padding: 0 calc(1.5vw + 20px);
+        justify-content: flex-start;
+    }
+
+    .header-imagem img {
+        width: clamp(150px, 28vw, 420px);
+        height: auto;
+        display: block;
+    }
+
+    #sobre_mim,
+    #skills,
+    #contato {
+        padding: 13% calc(1.5vw + 20px) 6% !important;
+    }
+}
+
+@media (max-width: 600px) {
+    #titulo-espaco {
+        padding: 0 3vw;
+        justify-content: flex-start;
+    }
+
+    #sobre_mim,
+    #skills,
+    #contato {
+        padding: 3% 5vw 1% !important;
+    }
+
+}
+
+.header-texto {
+    flex: 1;
+}
+
+.header-imagem {
+    flex-shrink: 0;
+}
+
+@media (max-width: 600px) {
+
+    .header-imagem {
+        display: none;
+    }
+
+}
+
+.header-imagem img {
+    width: clamp(250px, 28vw, 420px);
+    height: auto;
+    display: block;
+}
+
+h2 {
+    font-size: clamp(2rem, 1.5rem + 2vw, 3.5rem);
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+h1 {
+    font-size: clamp(3.2rem, 1.5rem + 10vw, 13.75rem);
+    color: var(--text-secondary);
+    font-weight: 800;
+    line-height: 0.85;
+    overflow: hidden;
+}
+
+
+.slogan {
+    font-size: clamp(1.1rem, 0.8rem + 1vw, 1.8rem);
+    color: var(--text-primary);
+    margin-top: 20px;
+    font-weight: 500;
+    max-width: 500px;
+}
+
+.action-buttons {
+    display: flex;
+    column-gap: 15px;
+    row-gap: 10px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 835px) {
+    .action-buttons {
+        display: flex;
+        column-gap: 15px;
+        row-gap: 10px;
+        margin-top: 10px;
+        flex-wrap: wrap;
+    }
+}
+
+.cta-button {
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding: 12px 25px;
+    border-radius: 10px;
+    transition: 0.3s;
+    display: inline-block;
+    text-align: center;
+    background-color: var(--text-primary);
+    color: var(--bg-page);
+    border: 3px solid var(--text-primary);
+}
+
+.cta-button:hover {
+    background-color: var(--text-secondary);
+    border-color: var(--text-secondary);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.secondary-cta {
+    background-color: transparent;
+    color: var(--text-primary);
+    border: 3px solid var(--text-primary);
+}
+
+.secondary-cta:hover {
+    background-color: var(--text-primary);
+    border-color: var(--text-primary);
+    color: var(--bg-page);
+}
+
+/* 2º pág: Sobre Mim */
+
+
+#sobre_mim {
+    width: 100%;
+    min-height: 110vh;
+    padding: 13% calc(5vw + 30px) 6%;
+    background-image: linear-gradient(to bottom,
+            transparent 0%,
+            var(--bg-page-50) 3.8%,
+            var(--bg-page) 12%);
+    display: grid;
+    grid-template-areas:
+        "foto titulo"
+        "foto texto";
+    grid-template-columns: 40% 2fr;
+    grid-template-rows: clamp(3rem, 1.5rem + 3vw, 6rem) auto;
+    column-gap: 2rem;
+    row-gap: 1.5rem;
+    font-size: 2rem;
+    color: var(--text-primary);
+}
+
+@media (max-width: 1038px) {
+    #sobre_mim {
+        grid-template-columns: 50% 2.5fr;
+    }
+
+    .texto {
+        font-size: clamp(16px, 2.2vw, 22px) !important;
+    }
+
+    .texto p {
+        margin: 2vh 0px !important;
+        line-height: 1 !important;
+    }
+}
+
+@media (max-width: 732px) {
+
+    #sobre_mim {
+        grid-template-rows: clamp(6rem, 3rem + 6vw, 12rem) auto;
+    }
+}
+
+@media (max-width: 600px) {
+    #sobre_mim {
+        grid-template-areas:
+            "foto"
+            "titulo"
+            "texto";
+        grid-template-columns: auto;
+        grid-template-rows: auto;
+        row-gap: 0.5rem;
+    }
+
+    .foto {
+        aspect-ratio: 35/40 !important;
+        border-radius: 10rem 10rem 0px 0px !important;
+    }
+
+}
+
+
+
+.foto {
+    grid-area: foto;
+    position: relative;
+    overflow: hidden;
+
+    background-image: url('imgs/eu-img.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    aspect-ratio: 35/40;
+    border-radius: 20vh 20vh 0 0;
+}
+
+.img-base,
+.img-topo {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.img-topo {
+    --x: 50%;
+    --y: 50%;
+    --r: 0px;
+
+    mask-image: radial-gradient(circle var(--r) at var(--x) var(--y),
+            transparent 0%,
+            black 100%);
+    -webkit-mask-image: radial-gradient(circle var(--r) at var(--x) var(--y),
+            transparent 0%,
+            black 100%);
+
+    transition: mask-size 0.3s;
+
+    opacity: 85.5%;
+
+    content: var(--img-vitral);
+}
+
+.titulo {
+    grid-area: titulo;
+}
+
+h3 {
+    font-size: clamp(3rem, 1.5rem + 3vw, 6rem);
+    font-weight: 700;
+    color: var(--text-secondary);
+}
+
+.sublinhado {
+    width: 100%;
+    height: 6px;
+    background-color: var(--text-primary);
+    border-radius: 0px 0px 10px 10px;
+    position: relative;
+}
+
+.texto {
+    grid-area: texto;
+    font-size: clamp(16px, 2.8vw, 26px);
+    text-align: justify;
+    max-width: 702px !important
+}
+
+.texto p {
+    margin: 2.3vh 0px;
+    line-height: 1.4;
+}
+
+
+/* 3º pág: Sikkls*/
+
+#skills {
+    width: 100%;
+    min-height: 100vh;
+    padding: 5% calc(5vw + 30px) 3%;
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+    align-items: center;
+}
+
+/* style.css */
+/* ADICIONE perto da área .tit-ski */
+
+.tit-ski {
+    display: flex;
+    align-items: center;
+    /* centraliza verticalmente com o título */
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: nowrap;
+    width: 100%;
+}
+
+/* título */
+.tit-ski h3 {
+    margin: 0;
+    flex: 1;
+    min-width: 0;
+    /* permite encolher sem jogar moeda pra baixo */
+    line-height: 0.95;
+}
+/* moeda */
+.coin-button {
+    flex-shrink: 0;
+    margin-left: auto;
+    width: 64px;
+    height: 64px;
+    border: none;
+    background: transparent;
+    padding: 0;
+    perspective: 1000px;
+    cursor: none;
+    margin-bottom: 4px;
+    transition: transform 0.2s ease; /* Para o efeito de hover/active */
+}
+
+.coin-inner {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform .75s cubic-bezier(.22, 1, .36, 1);
+}
+
+/* Quando a classe 'flipped' for adicionada via JS, ela gira */
+.coin-button.flipped .coin-inner {
+    transform: rotateY(180deg);
+}
+
+.coin-face {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    overflow: hidden;
     
-    if (!frontIcon || !backIcon) return;
+    /* CRUCIAL: Esconde a face oposta durante o giro */
+    backface-visibility: hidden; 
+    -webkit-backface-visibility: hidden;
+}
 
-    const isDark = document.body.classList.contains('dark-mode');
+.coin-icon {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+    filter: drop-shadow(0 12px 25px rgba(0,0,0,0.12));
+}
 
-    if (isDark) {
-        frontIcon.src = 'imgs/coroa-noite.png';
-        backIcon.src = 'imgs/harpa-noite.png';
-    } else {
-        frontIcon.src = 'imgs/coroa-dia.png';
-        backIcon.src = 'imgs/harpa-dia.png';
+/* O verso (harpia) já começa rotacionado para ficar atrás da primeira face */
+.coin-face.back {
+    transform: rotateY(180deg);
+}
+
+.coin-button:hover {
+    transform: translateY(-2px);
+}
+
+.coin-button:active {
+    transform: scale(.96);
+}
+
+@media (max-width:600px) {
+    .coin-button {
+        width: 50px;
+        height: 50px;
     }
 }
 
-// Interceptador para manter o estado ao recriar raspadinhas
-const iniciarRaspadinhaOriginal = window.iniciarRaspadinha;
-window.iniciarRaspadinha = function () {
-    if (typeof iniciarRaspadinhaOriginal === "function") {
-        iniciarRaspadinhaOriginal();
-    }
-
-    if (cardsOpened) {
-        document.body.classList.add("cards-open");
-        const canvases = document.querySelectorAll(".scratch-canvas");
-        canvases.forEach(c => c.style.opacity = "0");
-    }
-};
-
-// Lembre-se de chamar updateIconsForTheme() dentro da sua função 
-// que alterna o modo escuro (Dark Mode) para que as imagens mudem na hora!
-
-    // ===================================
-    // 6. LÓGICA DO EFEITO MOUSE-FOLLOW (GSAP)
-    // Aplicado APENAS na div #alternar-habilidades
-    // ===================================
-    const alternarHabilidades = document.getElementById("alternar-habilidades");
-    const bgEffectCursor = document.querySelector(".bg-effect-cursor");
-    const bgEffectShapes = document.querySelectorAll(".bg-effect-shapes .shape");
-
-    if (alternarHabilidades && bgEffectCursor && bgEffectShapes.length > 0) {
-
-        // Listener de movimento de mouse APENAS na div alvo
-        alternarHabilidades.addEventListener("mousemove", (evt) => {
-
-            const rect = alternarHabilidades.getBoundingClientRect();
-
-            const mouseX = evt.clientX - rect.left;
-            const mouseY = evt.clientY - rect.top;
-
-            gsap.set(bgEffectCursor, {
-                x: mouseX,
-                y: mouseY
-            });
-
-            gsap.to(bgEffectShapes, {
-                x: mouseX,
-                y: mouseY,
-                stagger: -0.08,
-                ease: "power2.out",
-                duration: 0.45
-            });
-
-        });
-
-        // Efeito de aparecer/desaparecer ao entrar e sair
-        alternarHabilidades.addEventListener("mouseenter", () => {
-            gsap.to([bgEffectCursor, bgEffectShapes], {
-                opacity: 1,
-                duration: 0.3
-            });
-        });
-
-        alternarHabilidades.addEventListener("mouseleave", () => {
-            gsap.to([bgEffectCursor, bgEffectShapes], {
-                opacity: 0,
-                duration: 0.5
-            });
-        });
-    }
-
-
-    const layers = [
-        { element: document.getElementById('sky-layer'), speed: 0.1 },
-        { element: document.getElementById('mountain-layer'), speed: 0.5 },
-        { element: document.getElementById('road-layer'), speed: 1.5 }
-    ];
-
-    const toggleButton = document.getElementById('toggle-button');
-    const constellationOverlay = document.getElementById('constellation-overlay');
-    const sites = document.getElementById('sites')
-    const car = document.getElementById('car');
-
-    let isMoving = false;
-    let positionX = 0;
-    let lastTimestamp = 0;
-    const BASE_VELOCITY = 10;
-    const TRAVEL_DURATION = 10000; // 10 segundos
-    let animationFrame;
-
-
-    // Movimento da direita para a esquerda
-    function animate(timestamp) {
-        if (!isMoving) {
-            cancelAnimationFrame(animationFrame);
-            return;
-        }
-
-        if (lastTimestamp === 0) lastTimestamp = timestamp;
-        const deltaTime = (timestamp - lastTimestamp) / 1000;
-        lastTimestamp = timestamp;
-
-        const distance = BASE_VELOCITY * deltaTime;
-        positionX += distance;
-
-        layers.forEach(layer => {
-            const transformValue = -positionX * layer.speed;
-            layer.element.style.transform = `translateX(${transformValue}vw)`;
-        });
-
-        animationFrame = requestAnimationFrame(animate);
-    }
-
-    // Inicia o movimento e para automaticamente
-    function startMovement() {
-        if (isMoving) return;
-
-        positionX = 0;
-        layers.forEach(layer => layer.element.style.transform = `translateX(0)`);
-
-        isMoving = true;
-        lastTimestamp = 0;
-        toggleButton.disabled = true;
-        toggleButton.textContent = 'Viajando...';
-        toggleButton.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
-        toggleButton.classList.add('bg-gray-500', 'cursor-not-allowed');
-        constellationOverlay.style.opacity = '0';
-        sites.style.opacity = '0';
-        sites.style.pointerEvents = 'none'
-        animationFrame = requestAnimationFrame(animate);
-
-        setTimeout(() => {
-            isMoving = false;
-            constellationOverlay.style.opacity = '1';
-            sites.style.opacity = '1';
-            sites.style.pointerEvents = 'all'
-            toggleButton.textContent = 'Fazer Viagem Novamente';
-            toggleButton.disabled = false;
-            toggleButton.classList.remove('bg-gray-500', 'cursor-not-allowed');
-            toggleButton.classList.add('bg-indigo-600', 'hover:bg-indigo-700');
-        }, TRAVEL_DURATION);
-    }
-
-    toggleButton.addEventListener('click', startMovement);
-
-    // Troca de veículo
-    document.querySelectorAll('.vehicle-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            car.innerHTML = btn.innerHTML;
-
-            // Remove classes antigas
-            car.classList.remove('carro', 'moto', 'viagem', 'onibus');
-
-            // Detecta o tipo de imagem pelo botão
-            if (btn.querySelector('.imagem-carro')) {
-                car.classList.add('carro');
-            } else if (btn.querySelector('.imagem-moto')) {
-                car.classList.add('moto');
-            } else if (btn.querySelector('.imagem-viagem')) {
-                car.classList.add('viagem');
-            } else if (btn.querySelector('.imagem-onibus')) {
-                car.classList.add('onibus');
-            }
-        });
-    });
-
-    function generateStars(count) {
-        constellationOverlay.innerHTML = '';
-        for (let i = 0; i < count; i++) {
-            const star = document.createElement('span');
-            star.className = 'star';
-            star.textContent = '●';
-            const top = Math.random() * 60 + 5;
-            const left = Math.random() * 100;
-            const size = Math.random() * 0.8 + 0.5;
-            star.style.top = `${top}vh`;
-            star.style.left = `${left}vw`;
-            star.style.fontSize = `${size}rem`;
-            star.style.animationDelay = `${Math.random() * 4}s`;
-            constellationOverlay.appendChild(star);
-        }
-    }
-
-
-    generateStars(50);
-
-    const estrelas = document.querySelectorAll('.bolinha');
-    const modals = document.querySelectorAll('.conteudo');
-    const svg = document.getElementById('lines');
-
-    // === Conexões entre as estrelas ===
-    const connections = [
-        [0, 1],
-        [0, 2],
-        [1, 3],
-        [2, 3],
-        [3, 4],
-        [4, 5]
-    ];
-
-    // === Função que desenha as linhas ===
-    function drawLines() {
-        svg.innerHTML = "";
-        const rect = svg.getBoundingClientRect();
-
-        connections.forEach(([a, b]) => {
-            const p1 = estrelas[a].getBoundingClientRect();
-            const p2 = estrelas[b].getBoundingClientRect();
-
-            const x1 = p1.left - rect.left + p1.width / 2;
-            const y1 = p1.top - rect.top + p1.height / 2;
-            const x2 = p2.left - rect.left + p2.width / 2;
-            const y2 = p2.top - rect.top + p2.height / 2;
-
-            const themeStarColor = getComputedStyle(document.documentElement)
-                .getPropertyValue('--cor-estrelas')
-                .trim();
-
-            const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-            line.setAttribute("x1", x1);
-            line.setAttribute("y1", y1);
-            line.setAttribute("x2", x2);
-            line.setAttribute("y2", y2);
-            line.setAttribute("stroke-width", "2");
-            svg.appendChild(line);
-
-
-            svg.appendChild(line);
-        });
-    }
-
-    // === Abrir modal ao clicar na estrela ===
-    estrelas.forEach((estrela, i) => {
-        estrela.addEventListener("click", () => {
-            modals[i].style.display = "block";
-        });
-    });
-
-    // === Fechar modal ao clicar no X ===
-    const closes = document.querySelectorAll(".close");
-    closes.forEach(close => {
-        close.addEventListener("click", () => {
-            modals.forEach(m => m.style.display = "none");
-        });
-    });
-
-
-    // === Fechar modal ao clicar fora do conteúdo ===
-    modals.forEach(modal => {
-        modal.addEventListener("click", (event) => {
-            // Só fecha se o clique for exatamente no fundo (fora do conteúdo)
-            if (event.target === modal) {
-                modal.style.display = "none";
-            }
-        });
-    });
-
-    // === Redesenhar linhas ao carregar e redimensionar ===
-    window.addEventListener("load", drawLines);
-    window.addEventListener("resize", drawLines);
-
-});
-
-// ==================================
-// CURSOR COLOR CHANGE IN CONTACT SECTION
-// ==================================
-const inverso = document.querySelectorAll('.inverso');
-const pointerMain = document.getElementById('custom-pointer');
-const pointerTrail = document.getElementById('custom-pointer-trail');
-
-inverso.forEach(section => {
-
-    section.addEventListener('mouseenter', () => {
-        pointerMain.style.setProperty('background-color', 'var(--mouse-eye-conts)');
-        pointerTrail.style.setProperty('background-color', 'var(--mouse-conts)');
-    });
-
-    section.addEventListener('mouseleave', () => {
-        pointerMain.style.setProperty('background-color', 'var(--mouse-eye-color)');
-        pointerTrail.style.setProperty('background-color', 'var(--mouse-color)');
-    });
-
-});
-
-const form = document.getElementById('form-contato');
-
-form.addEventListener('submit', function (event) {
-    // 1. Impede o envio padrão do formulário (que causa o erro POST)
-    event.preventDefault();
-
-    // 2. Coleta os dados (opcional)
-    const nome = document.getElementById('nome').value;
-    const email = document.getElementById('email').value;
-    // ... continue para outros campos
-
-    // 3. FAÇA O QUE VOCÊ QUISER COM OS DADOS AQUI!
-    // Exemplo: Mostrar no console, enviar por uma API Fetch, etc.
-    console.log("Dados coletados:", nome, email);
-
-    // Opcional: Limpar o formulário
-    form.reset();
-});
-
-let telefone = document.getElementById("telefone")
-telefone.addEventListener("input", () => {
-    let telefone = document.getElementById("telefone").value
-    telefone = telefone.slice(0, 15)
-    document.getElementById("telefone").value = telefone
-
-    if (telefone[0] != "(") {
-        if (telefone[0] != undefined) {
-            document.getElementById("telefone").value = telefone.slice(0, 0) + "(" + telefone.slice(0)
-        }
-    }
-    if (telefone[3] != ")") {
-        if (telefone[3] != undefined) {
-            document.getElementById("telefone").value = telefone.slice(0, 3) + ")" + telefone.slice(3)
-        }
-    }
-    if (telefone[4] != " ") {
-        if (telefone[4] != undefined) {
-            document.getElementById("telefone").value = telefone.slice(0, 4) + " " + telefone.slice(4)
-        }
-    }
-    if (telefone[10] != "-") {
-        if (telefone[10] != undefined) {
-            document.getElementById("telefone").value = telefone.slice(0, 10) + "-" + telefone.slice(10)
-        }
-    }
-});
-
-const container = document.getElementById("fotoContainer");
-const topo = document.getElementById("imgTopo");
-
-let aberto = false; // controla estado
-
-// 🔹 Mouse follow (efeito spotlight)
-container.addEventListener("mousemove", (e) => {
-    const rect = container.getBoundingClientRect();
-
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    topo.style.setProperty("--x", `${x}px`);
-    topo.style.setProperty("--y", `${y}px`);
-});
-
-// 🔹 Clique → animação radial
-container.addEventListener("click", (e) => {
-    const rect = container.getBoundingClientRect();
-
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    topo.style.setProperty("--x", `${x}px`);
-    topo.style.setProperty("--y", `${y}px`);
-
-    if (!aberto) {
-        expandirMascara();
-    } else {
-        contrairMascara();
-    }
-
-    aberto = !aberto;
-});
-
-// 🔥 animação expandir
-function expandirMascara() {
-    let radius = 0;
-
-    const max = Math.sqrt(
-        container.offsetWidth ** 2 + container.offsetHeight ** 2
-    );
-
-    const anim = setInterval(() => {
-        radius += 20;
-        topo.style.setProperty("--r", `${radius}px`);
-
-        if (radius >= max) clearInterval(anim);
-    }, 10);
+#alternar-habilidades {
+    width: 100%;
+    display: flex;
+    position: relative;
+    overflow: hidden;
+    justify-content: center;
+    align-items: flex-start;
+    margin: 2rem 0;
+    position: relative;
+    background-color: var(--text-primary);
+    padding: 1.4rem 0;
+    border-radius: 20px;
+    font-size: clamp(1.5rem, 0.6rem + 1vw, 1.7rem);
+    color: transparent;
 }
 
-// 🔥 animação contrair (invertida)
-function contrairMascara() {
-    let radius = Math.sqrt(
-        container.offsetWidth ** 2 + container.offsetHeight ** 2
-    );
-
-    const anim = setInterval(() => {
-        radius -= 20;
-        topo.style.setProperty("--r", `${radius}px`);
-
-        if (radius <= 0) clearInterval(anim);
-    }, 10);
+.opcoes {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    font-weight: 700;
+    color: var(--bg-page);
 }
 
-function drawCoverImage(ctx, img, canvas) {
-    const canvasRatio = canvas.width / canvas.height;
-    const imgRatio = img.width / img.height;
-
-    let drawWidth, drawHeight, offsetX, offsetY;
-
-    if (imgRatio > canvasRatio) {
-        drawHeight = canvas.height;
-        drawWidth = img.width * (canvas.height / img.height);
-        offsetX = (canvas.width - drawWidth) / 2;
-        offsetY = 0;
-    } else {
-        drawWidth = canvas.width;
-        drawHeight = img.height * (canvas.width / img.width);
-        offsetX = 0;
-        offsetY = (canvas.height - drawHeight) / 2;
-    }
-
-    ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
-}
-
-function iniciarRaspadinha() {
-    const cards = document.querySelectorAll(".cartao");
-
-    cards.forEach(card => {
-        const oldCanvas = card.querySelector(".scratch-canvas");
-        if (oldCanvas) oldCanvas.remove();
-
-        const canvas = document.createElement("canvas");
-        canvas.classList.add("scratch-canvas");
-
-        const ctx = canvas.getContext("2d");
-        card.appendChild(canvas);
-
-        const resizeCanvas = () => {
-            const width = card.offsetWidth;
-            const height = card.offsetHeight;
-
-            if (width === 0 || height === 0) return;
-
-            canvas.width = width;
-            canvas.height = height;
-
-            const isDark = document.body.classList.contains("dark-mode");
-
-            const img = new Image();
-            img.src = isDark
-                ? "imgs/raspar-noite.png"
-                : "imgs/raspar-dia.png";
-
-            img.onload = () => {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                drawCoverImage(ctx, img, canvas);
-            };
-        };
-
-        resizeCanvas();
-
-        let drawing = false;
-
-        function raspar(x, y) {
-            ctx.globalCompositeOperation = "destination-out";
-
-            const gradient = ctx.createRadialGradient(x, y, 0, x, y, 30);
-            gradient.addColorStop(0, "rgba(0,0,0,1)");
-            gradient.addColorStop(1, "rgba(0,0,0,0)");
-
-            ctx.fillStyle = gradient;
-            ctx.beginPath();
-            ctx.arc(x, y, 30, 0, Math.PI * 2);
-            ctx.fill();
-        }
-
-        function getPos(e) {
-            const rect = canvas.getBoundingClientRect();
-
-            const touch = e.touches ? e.touches[0] : e;
-
-            return {
-                x: touch.clientX - rect.left,
-                y: touch.clientY - rect.top
-            };
-        }
-
-        function start(e) {
-            drawing = true;
-            const pos = getPos(e);
-            raspar(pos.x, pos.y);
-        }
-
-        function move(e) {
-            if (!drawing) return;
-            e.preventDefault();
-
-            const pos = getPos(e);
-            raspar(pos.x, pos.y);
-        }
-
-        function end() {
-            drawing = false;
-        }
-
-        canvas.addEventListener("mousedown", start);
-        canvas.addEventListener("mousemove", move);
-        canvas.addEventListener("mouseup", end);
-        canvas.addEventListener("mouseleave", end);
-
-        canvas.addEventListener("touchstart", start, { passive: false });
-        canvas.addEventListener("touchmove", move, { passive: false });
-        canvas.addEventListener("touchend", end);
-
-        window.addEventListener("resize", resizeCanvas);
-    });
+.opcoes span {
+    font-size: clamp(1.5rem, 0.6rem + 1vw, 1.7rem);
+    transition: color 0.3s ease;
+    padding-bottom: 6px;
+    position: relative;
 }
 
 
-
-// ==================================
-// 8. TRADUÇÃO PORTUGUÊS/INGLÊS
-// ==================================
-const languageToggle = document.getElementById('languageToggle');
-const languageText = document.getElementById('languageText');
-let currentLanguage = 'pt';
-
-// Textos traduzidos
-const translations = {
-    pt: {
-        // Navegação
-        sobreMim: "Sobre Mim",
-        skills: "Skills",
-        projetos: "Projetos",
-        contato: "Contato",
-        resume: "Currículo",
-
-        // Header
-        ola: "Olá! Eu sou",
-        slogan: "Um Desenvolvedor de Softwares que Busca Resolver.",
-        verProjetos: "Ver Projetos",
-        entreContato: "Entre em Contato",
-
-        // Sobre Mim
-        sobreMimTitulo: "Sobre Mim",
-        sobreMimTexto1: "Eu sou o Kalil, um estudante de 16 anos, que está atualmente no 2º ano do ensino médio técnico do COTEMIG. Atuo na área de TI, com foco em criação de Softwares/Sites e Agentes de IA para automação.",
-        sobreMimTexto2: "Meu perfil comportamental é Analista e Planejador, gosto de compreender a lógica por traz das coisas e das pessoas ao meu redor, e posso dizer que sou alguém bastante observador.",
-        sobreMimTexto3: "Tenho experiência em HTML/CSS/JS, MySQL, C#, N8N entre outras habilidades que você poderá ver na aba Skills, então não tenha pressa.",
-
-        // Skills
-        minhasSkills: "Minhas Skills",
-        softSkills: "Soft Skills",
-        hardSkills: "Hard Skills",
-
-        // Soft Skills
-        comunicacao: "Comunicação",
-        comunicacaoDesc: "Se expressar bem e ouvir com atenção.",
-        prestatividade: "Prestatividade",
-        prestatividadeDesc: "Colaborar e ajudar os colegas.",
-        lideranca: "Liderança",
-        liderancaDesc: "Guiar e inspirar o time.",
-        criatividade: "Criatividade",
-        criatividadeDesc: "Pensar em soluções fora da caixa.",
-        empatia: "Empatia",
-        empatiaDesc: "Entender o ponto de vista dos outros.",
-        organizacao: "Organização",
-        organizacaoDesc: "Gerenciar tempo e tarefas com eficiência.",
-        adaptabilidade: "Adaptabilidade",
-        adaptabilidadeDesc: "Saber se ajustar a mudanças rápidas.",
-        resiliencia: "Resiliência",
-        resilienciaDesc: "Manter a calma sob pressão.",
-
-        // Hard Skills
-        html: "HTML",
-        htmlDesc: "Estrutura semântica e acessível.",
-        css: "CSS",
-        cssDesc: "Design moderno e responsivo.",
-        javascript: "JavaScript",
-        javascriptDesc: "Interatividade e lógica dinâmica.",
-        react: "React",
-        reactDesc: "Construção de interfaces eficientes.",
-        nodejs: "Node.js",
-        nodejsDesc: "Desenvolvimento backend escalável.",
-        git: "Git",
-        gitDesc: "Controle de versão profissional.",
-        figma: "Figma",
-        figmaDesc: "Prototipagem e design UI/UX.",
-        sql: "SQL",
-        sqlDesc: "Gerenciamento de banco de dados.",
-
-        // Projetos
-        projetosTitulo: "Projetos",
-        iniciarViagem: "Iniciar Viagem",
-        fazerViagemNovamente: "Fazer Viagem Novamente",
-        viajando: "Viajando...",
-
-        // Contato
-        contatoTitulo: "Contato",
-        nome: "Nome",
-        nomePlaceholder: "Digite seu Nome Completo",
-        email: "Email",
-        emailPlaceholder: "Digite seu e-mail",
-        telefone: "Telefone",
-        telefonePlaceholder: "(00) 00000-0000",
-        mensagem: "Mensagem",
-        mensagemPlaceholder: "Escreva sua mensagem aqui...",
-        enviar: "Enviar",
-        ou: "ou",
-
-        // Footer
-        footer: "© 2025 Kalil Felipe • Todos os direitos reservados",
-
-        // Botões
-        curriculo: "Currículo",
-        idioma: "PT"
-    },
-    en: {
-        // Navigation
-        sobreMim: "About Me",
-        skills: "Skills",
-        projetos: "Projects",
-        contato: "Contact",
-        resume: "Resume/CV",
-
-        // Header
-        ola: "Hello! I'm",
-        slogan: "A Software Developer Who Seeks to Solve.",
-        verProjetos: "View Projects",
-        entreContato: "Get in Touch",
-
-        // About Me
-        sobreMimTitulo: "About Me",
-        sobreMimTexto1: "I'm Kalil, a 16-year-old student currently in the 2nd year of technical high school at COTEMIG. I work in the IT field, focusing on Software/Website creation and AI Agents for automation.",
-        sobreMimTexto2: "My behavioral profile is Analyst and Planner, I enjoy understanding the logic behind things and people around me, and I can say I'm quite observant.",
-        sobreMimTexto3: "I have experience in HTML/CSS/JS, MySQL, C#, N8N among other skills you can see in the Skills section, so take your time.",
-
-        // Skills
-        minhasSkills: "My Skills",
-        softSkills: "Soft Skills",
-        hardSkills: "Hard Skills",
-
-        // Soft Skills
-        comunicacao: "Communication",
-        comunicacaoDesc: "Express yourself well and listen carefully.",
-        prestatividade: "Helpfulness",
-        prestatividadeDesc: "Collaborate and help colleagues.",
-        lideranca: "Leadership",
-        liderancaDesc: "Guide and inspire the team.",
-        criatividade: "Creativity",
-        criatividadeDesc: "Think outside the box solutions.",
-        empatia: "Empathy",
-        empatiaDesc: "Understand others' perspectives.",
-        organizacao: "Organization",
-        organizacaoDesc: "Manage time and tasks efficiently.",
-        adaptabilidade: "Adaptability",
-        adaptabilidadeDesc: "Know how to adjust to rapid changes.",
-        resiliencia: "Resilience",
-        resilienciaDesc: "Stay calm under pressure.",
-
-        // Hard Skills
-        html: "HTML",
-        htmlDesc: "Semantic and accessible structure.",
-        css: "CSS",
-        cssDesc: "Modern and responsive design.",
-        javascript: "JavaScript",
-        javascriptDesc: "Interactivity and dynamic logic.",
-        react: "React",
-        reactDesc: "Efficient interface construction.",
-        nodejs: "Node.js",
-        nodejsDesc: "Scalable backend development.",
-        git: "Git",
-        gitDesc: "Professional version control.",
-        figma: "Figma",
-        figmaDesc: "Prototyping and UI/UX design.",
-        sql: "SQL",
-        sqlDesc: "Database management.",
-
-        // Projects
-        projetosTitulo: "Projects",
-        iniciarViagem: "Start Journey",
-        fazerViagemNovamente: "Take Journey Again",
-        viajando: "Traveling...",
-
-        // Contact
-        contatoTitulo: "Contact",
-        nome: "Name",
-        nomePlaceholder: "Enter your Full Name",
-        email: "Email",
-        emailPlaceholder: "Enter your email",
-        telefone: "Phone",
-        telefonePlaceholder: "(00) 00000-0000",
-        mensagem: "Message",
-        mensagemPlaceholder: "Write your message here...",
-        enviar: "Send",
-        ou: "or",
-
-        // Footer
-        footer: "© 2025 Kalil Felipe • All rights reserved",
-
-        // Buttons
-        curriculo: "CV",
-        idioma: "EN"
-    }
-};
-
-// Função para aplicar tradução
-function applyTranslation(language) {
-    const texts = translations[language];
-
-    // Navegação
-    document.querySelector('a[href="#sobre_mim"]').textContent = texts.sobreMim;
-    document.querySelector('a[href="#skills"]').textContent = texts.skills;
-    document.querySelector('a[href="#projetos"]').textContent = texts.projetos;
-    document.querySelector('a[href="#contato"]').textContent = texts.contato;
-    document.querySelector('.curriculo-mobile').textContent = texts.resume;
-
-    // Header
-    document.querySelector('#titulo-espaco h2').textContent = texts.ola;
-    document.querySelector('.slogan').textContent = texts.slogan;
-    document.querySelector('.action-buttons a[href="#projetos"]').textContent = texts.verProjetos;
-    document.querySelector('.action-buttons a[href="#contato"]').textContent = texts.entreContato;
-
-    // Sobre Mim
-    document.querySelector('#sobre_mim .titulo h3').textContent = texts.sobreMimTitulo;
-    const sobreMimTextos = document.querySelectorAll('#sobre_mim .texto p');
-    sobreMimTextos[0].textContent = texts.sobreMimTexto1;
-    sobreMimTextos[1].textContent = texts.sobreMimTexto2;
-    sobreMimTextos[2].textContent = texts.sobreMimTexto3;
-
-    // Skills
-    document.querySelector('.tit-ski h3').textContent = texts.minhasSkills;
-    document.getElementById('botaoSoft').textContent = texts.softSkills;
-    document.getElementById('botaoHard').textContent = texts.hardSkills;
-
-    // Soft Skills
-    const softSkillsCards = document.querySelectorAll('.habilidade-soft');
-    softSkillsCards[0].querySelector('h3').textContent = texts.comunicacao;
-    softSkillsCards[0].querySelector('p').textContent = texts.comunicacaoDesc;
-    softSkillsCards[1].querySelector('h3').textContent = texts.prestatividade;
-    softSkillsCards[1].querySelector('p').textContent = texts.prestatividadeDesc;
-    softSkillsCards[2].querySelector('h3').textContent = texts.lideranca;
-    softSkillsCards[2].querySelector('p').textContent = texts.liderancaDesc;
-    softSkillsCards[3].querySelector('h3').textContent = texts.criatividade;
-    softSkillsCards[3].querySelector('p').textContent = texts.criatividadeDesc;
-    softSkillsCards[4].querySelector('h3').textContent = texts.empatia;
-    softSkillsCards[4].querySelector('p').textContent = texts.empatiaDesc;
-    softSkillsCards[5].querySelector('h3').textContent = texts.organizacao;
-    softSkillsCards[5].querySelector('p').textContent = texts.organizacaoDesc;
-    softSkillsCards[6].querySelector('h3').textContent = texts.adaptabilidade;
-    softSkillsCards[6].querySelector('p').textContent = texts.adaptabilidadeDesc;
-    softSkillsCards[7].querySelector('h3').textContent = texts.resiliencia;
-    softSkillsCards[7].querySelector('p').textContent = texts.resilienciaDesc;
-
-    // Hard Skills
-    const hardSkillsCards = document.querySelectorAll('.habilidade-hard');
-    hardSkillsCards[0].querySelector('h3').textContent = texts.html;
-    hardSkillsCards[0].querySelector('p').textContent = texts.htmlDesc;
-    hardSkillsCards[1].querySelector('h3').textContent = texts.css;
-    hardSkillsCards[1].querySelector('p').textContent = texts.cssDesc;
-    hardSkillsCards[2].querySelector('h3').textContent = texts.javascript;
-    hardSkillsCards[2].querySelector('p').textContent = texts.javascriptDesc;
-    hardSkillsCards[3].querySelector('h3').textContent = texts.react;
-    hardSkillsCards[3].querySelector('p').textContent = texts.reactDesc;
-    hardSkillsCards[4].querySelector('h3').textContent = texts.nodejs;
-    hardSkillsCards[4].querySelector('p').textContent = texts.nodejsDesc;
-    hardSkillsCards[5].querySelector('h3').textContent = texts.git;
-    hardSkillsCards[5].querySelector('p').textContent = texts.gitDesc;
-    hardSkillsCards[6].querySelector('h3').textContent = texts.figma;
-    hardSkillsCards[6].querySelector('p').textContent = texts.figmaDesc;
-    hardSkillsCards[7].querySelector('h3').textContent = texts.sql;
-    hardSkillsCards[7].querySelector('p').textContent = texts.sqlDesc;
-
-    // Projetos
-    document.querySelector('.espa-proj h3').textContent = texts.projetosTitulo;
-    const toggleButton = document.getElementById('toggle-button');
-    if (toggleButton.textContent.includes('Iniciar') || toggleButton.textContent.includes('Start')) {
-        toggleButton.textContent = texts.iniciarViagem;
-    } else if (toggleButton.textContent.includes('Fazer') || toggleButton.textContent.includes('Take')) {
-        toggleButton.textContent = texts.fazerViagemNovamente;
-    } else if (toggleButton.textContent.includes('Viajando') || toggleButton.textContent.includes('Traveling')) {
-        toggleButton.textContent = texts.viajando;
-    }
-
-    // Contato
-    document.querySelector('.tit-cont h3').textContent = texts.contatoTitulo;
-    document.querySelector('label[for="nome"]').textContent = texts.nome;
-    document.getElementById('nome').placeholder = texts.nomePlaceholder;
-    document.querySelector('label[for="email"]').textContent = texts.email;
-    document.getElementById('email').placeholder = texts.emailPlaceholder;
-    document.querySelector('label[for="telefone"]').textContent = texts.telefone;
-    document.getElementById('telefone').placeholder = texts.telefonePlaceholder;
-    document.querySelector('label[for="mensagem"]').textContent = texts.mensagem;
-    document.getElementById('mensagem').placeholder = texts.mensagemPlaceholder;
-    document.getElementById('btn-enviar').textContent = texts.enviar;
-    document.querySelector('#area-cont span').textContent = texts.ou;
-
-    // Footer
-    document.querySelector('#footer p').textContent = texts.footer;
-
-    // Botões
-    document.getElementById('resumeText').textContent = texts.curriculo;
-    languageText.textContent = texts.idioma;
-
-    // Salvar preferência
-    localStorage.setItem('language', language);
+#linha-marker {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 4px;
+    width: 0;
+    background-color: var(--bg-page);
+    border-radius: 3px;
+    transition:
+        transform 0.8s cubic-bezier(0.19, 1, 0.22, 1),
+        width 0.8s cubic-bezier(0.19, 1, 0.22, 1),
+        background-color 0.4s ease,
+        opacity 0.4s ease;
 }
 
-// Event listener para alternar idioma
-languageToggle.addEventListener('click', () => {
-    currentLanguage = currentLanguage === 'pt' ? 'en' : 'pt';
-    applyTranslation(currentLanguage);
-});
 
-// Carregar idioma salvo ao iniciar
-const savedLanguage = localStorage.getItem('language') || 'pt';
-currentLanguage = savedLanguage;
-applyTranslation(currentLanguage);
+/* ------------------- */
+/* NOVOS ESTILOS DO EFEITO DE FUNDO */
+/* ------------------- */
 
-const menuToggle = document.getElementById("menu-toggle");
-const mobileMenu = document.getElementById("mobile-menu");
+.content-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 20;
+    /* Garante que o conteúdo (botões/cards) fique por cima do efeito */
+    padding: calc(1.4rem - 3px) 0;
+    /* Espaçamento interno original */
+    display: flex;
+    flex-direction: column;
+}
 
-menuToggle.addEventListener("click", () => {
-    mobileMenu.classList.toggle("active");
-    menuToggle.classList.toggle("active");
-});
+.opcoes,
+.opcoes span,
+#linha-marker {
+    pointer-events: auto;
+}
+
+.bg-effect-shapes {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    background: var(--text-secondary);
+    /* Cor principal de fundo do efeito */
+    z-index: 1;
+    /* Fica abaixo do conteúdo (.content-overlay) */
+    opacity: 0.7;
+    /* Suaviza a cor de fundo */
+}
+
+.bg-effect-cursor {
+    position: absolute;
+    background: transparent;
+    /* Cor base do cursor de fundo */
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border-radius: 50%;
+    will-change: transform;
+    user-select: none;
+    pointer-events: none;
+    z-index: 10;
+    /* Fica acima das formas, mas abaixo do conteúdo */
+    opacity: 0;
+    /* Começa invisível, será animado no JS */
+}
+
+.shape {
+    will-change: transform;
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0;
+    /* Ajuste a opacidade para misturar melhor */
+}
+
+/* Definição das formas (adaptadas para usar variáveis de tema) */
+.shape-1 {
+    background: var(--text-primary);
+    width: 650px;
+    height: 650px;
+    margin: -325px 0 0 -325px;
+}
+
+.shape-2 {
+    background: var(--bg-page);
+    width: 440px;
+    height: 440px;
+    margin: -220px 0 0 -220px;
+}
+
+.shape-3 {
+    background: var(--color-select);
+    width: 270px;
+    height: 270px;
+    margin: -135px 0 0 -135px;
+}
+
+
+/* Container do grid responsivo */
+#espa-grid {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    padding: 0 1rem;
+}
+
+.grade-habilidades {
+    display: grid;
+    max-width: 1400px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+    width: 100%;
+}
+
+/* Cartões responsivos */
+.cartao {
+    background: var(--color-cartao);
+    backdrop-filter: blur(6px);
+    border: 4px solid var(--text-primary);
+    border-radius: 15px;
+    padding: 1.5rem 1rem;
+    text-align: center;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transition: opacity 0.35s ease, transform 0.35s ease;
+
+    position: relative;
+    overflow: hidden;
+}
+
+.scratch-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+    z-index: 3;
+    cursor: none;
+}
+
+.cartao>*:not(canvas) {
+    position: relative;
+    z-index: 1;
+}
+
+.cartao.saindo {
+    opacity: 0;
+    transform: translateY(-20px);
+}
+
+.cartao.entrando {
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.cartao.visivel {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.cartao svg {
+    width: 40px;
+    height: 40px;
+    fill: var(--bg-page);
+    margin-bottom: 0.7rem;
+}
+
+.cartao h3 {
+    font-size: clamp(1.3rem, 1rem + 0.5vw, 1.6rem);
+    color: var(--bg-page);
+    margin-bottom: 0.4rem;
+    line-height: 1.2;
+}
+
+.cartao p {
+    font-size: clamp(0.85rem, 0.8rem + 0.2vw, 0.95rem);
+    color: var(--bg-page);
+    line-height: 1.4;
+}
+
+/* ============ RESPONSIVIDADE ============ */
+
+/* Tablets (768px - 1024px) */
+@media (max-width: 1024px) {
+    .grade-habilidades {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.2rem;
+        padding: 0 0.5rem;
+    }
+
+    .cartao {
+        padding: 1.2rem 0.8rem;
+        min-height: 180px;
+    }
+
+    .cartao h3 {
+        font-size: 1.4rem;
+    }
+
+    .cartao p {
+        font-size: 0.9rem;
+    }
+}
+
+/* Tablets Pequenos (600px - 768px) */
+@media (max-width: 768px) {
+
+    .grade-habilidades {
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1rem;
+    }
+
+    .cartao {
+        padding: 1rem 0.8rem;
+        min-height: 160px;
+    }
+
+    .cartao svg {
+        width: 35px;
+        height: 35px;
+        margin-bottom: 0.5rem;
+    }
+
+    .cartao h3 {
+        font-size: 1.3rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .cartao p {
+        font-size: 0.85rem;
+    }
+
+    #alternar-habilidades {
+        margin: 1.5rem auto;
+        padding: 1.2rem 0.8rem;
+    }
+
+    .opcoes {
+        gap: 1rem;
+    }
+
+    .opcoes span {
+        font-size: 1.1rem;
+    }
+}
+
+/* Telefones (480px - 600px) */
+@media (max-width: 600px) {
+    .grade-habilidades {
+        grid-template-columns: 1fr;
+        max-width: 400px;
+        gap: 1rem;
+        margin: 0px;
+        padding: 0px;
+    }
+
+    #espa-grid {
+        padding: 0px 1.5rem;
+    }
+
+    .cartao {
+        padding: 1.5rem 1rem;
+        min-height: 140px;
+    }
+
+    .cartao:hover {
+        transform: translateY(-5px);
+    }
+
+    #alternar-habilidades {
+        padding: 1rem 0.5rem;
+        border-radius: 15px;
+    }
+
+    .opcoes {
+        gap: 0.8rem;
+    }
+
+    .opcoes span {
+        font-size: 1rem;
+        padding-bottom: 4px;
+    }
+}
+
+/* Telefones Pequenos (até 480px) */
+@media (max-width: 480px) {
+
+    .grade-habilidades {
+        gap: 0.8rem;
+    }
+
+    .cartao {
+        padding: 1.2rem 0.8rem;
+        min-height: 130px;
+    }
+
+    .cartao svg {
+        width: 30px;
+        height: 30px;
+        margin-bottom: 0.4rem;
+    }
+
+    .cartao h3 {
+        font-size: 1.2rem;
+    }
+
+    .cartao p {
+        font-size: 0.8rem;
+    }
+
+    #alternar-habilidades {
+        margin: 1rem auto;
+        padding: 0.8rem 0.5rem;
+    }
+
+    .opcoes {
+        gap: 0.5rem;
+    }
+
+    .opcoes span {
+        font-size: 0.9rem;
+    }
+}
+
+/* Telas muito grandes (acima de 1400px) */
+@media (min-width: 1400px) {
+    .grade-habilidades {
+        grid-template-columns: repeat(4, minmax(300px, 1fr));
+        gap: 2rem;
+    }
+
+    .cartao {
+        padding: 2rem 1.5rem;
+        min-height: 220px;
+    }
+
+    .cartao h3 {
+        font-size: 1.8rem;
+    }
+
+    .cartao p {
+        font-size: 1.1rem;
+    }
+}
+
+/* 4º pág: Projetos */
+
+
+/* === SEÇÃO: VIAGEM NOTURNA === */
+
+#projetos {
+    position: relative;
+    width: 100%;
+    height: 109vh;
+    background-color: var(--bg-page);
+    padding-top: 3%;
+    overflow: hidden;
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: top;
+    flex-direction: column;
+}
+
+.espa-proj {
+    margin: 0% calc(5vw + 30px);
+}
+
+.tit-proj {
+    display: flex;
+
+    align-items: flex-end; /* 🔥 joga tudo pra baixo */
+
+    justify-content: space-between;
+}
+
+.travel-button {
+    width: 64px;
+    height: 64px;
+    aspect-ratio: 1 / 1; /* 🔥 garante quadrado sempre */
+    
+    border: none;
+    background: transparent;
+    padding: 0;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 4px;
+}
+
+.travel-button:hover {
+    transform: translateY(-2px);
+}
+
+.travel-button:active {
+    transform: scale(.96);
+}
+
+.travel-inner {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 🔁 animação contínua */
+@keyframes girar {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* 🔥 classe ativada no clique */
+.travel-button.ativo .travel-inner {
+    animation: girar 3s linear infinite;
+}
+
+.travel-icon {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: drop-shadow(0 12px 25px rgba(0,0,0,0.12));
+}
+
+#noite-estrelada {
+    position: relative;
+    width: 100%;
+    height: 90vh;
+    background-color: var(--bg-page);
+    overflow: hidden;
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* CENÁRIO (camadas do fundo) */
+.parallax-scene {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.parallax-layer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 200%;
+    height: 100%;
+    background-repeat: repeat-x;
+    background-size: cover;
+    transition: transform 0.1s linear;
+}
+
+#sky-layer {
+    z-index: 10;
+    background-image: var(--img-ceu);
+    opacity: 90%;
+    background-size: auto 100%;
+}
+
+#mountain-layer {
+    z-index: 20;
+    height: 80%;
+    background-image: var(--img-montanha);
+    opacity: 90%;
+    background-size: auto 100%;
+}
+
+#road-layer {
+    height: 22vh;
+    z-index: 30;
+    width: 280%;
+    background-image: var(--img-rua);
+
+    background-size: auto 100%;
+}
+
+/* CARRO */
+#car {
+    position: absolute;
+    bottom: 7vh;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 50;
+    filter: drop-shadow(0 0 4px var(--cor-veiculo));
+    user-select: none;
+
+    /* Responsividade */
+    width: 29vh;
+    height: auto;
+}
+
+
+#car::before {
+    content: '';
+    position: absolute;
+    top: -110px;
+    left: 110%;
+    transform: translateX(-50%);
+    z-index: -1;
+
+    width: 80%;
+    height: 250%;
+
+    background: linear-gradient(to bottom,
+            #f5f5f599,
+            #f5f5f566 30%,
+            #f5f5f500);
+
+    clip-path: polygon(50% 0%,
+            100% 100%,
+            0% 100%);
+
+    transform: rotate(-90deg);
+}
+
+
+/* Posição padrão */
+#car::before {
+    top: -74%;
+    left: 105%;
+}
+
+/* Ajuste para moto */
+#car.moto::before {
+    top: -85%;
+    left: 98%;
+}
+
+/* Ajuste para viagem */
+#car.viagem::before {
+    top: -59%;
+    left: 105%;
+}
+
+/* Ajuste para ônibus */
+#car.onibus::before {
+    top: -59%;
+    left: 105%;
+}
+
+/* Farol desligado no modo claro */
+body:not(.dark-mode) #car::before {
+    opacity: 0;
+    filter: brightness(0.4);
+}
+
+
+#car img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.imagem-carro {
+    content: var(--img-carro);
+    height: 2.2vh;
+}
+
+.imagem-moto {
+    content: var(--img-moto);
+    height: 2.2vh;
+}
+
+.imagem-viagem {
+    content: var(--img-viagem);
+    height: 2.2vh;
+}
+
+.imagem-onibus {
+    content: var(--img-onibus);
+    height: 2.2vh;
+}
+
+
+/* ESTRELAS E CONSTELAÇÃO */
+#constellation-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    pointer-events: none;
+    /* por padrão não interfere; ativamos para a constelação interna */
+    opacity: 0;
+    transition: opacity 2.3s ease-in-out;
+    background: radial-gradient(circle at 50% 10%, rgba(255, 255, 255, 0.06) 0%, rgba(0, 0, 0, 0) 60%);
+}
+
+#sites {
+    position: absolute;
+    /* Para posicionar em relação ao overlay */
+    top: 50%;
+    left: 50%;
+    z-index: 99;
+    transform: translate(-50%, -50%);
+    /* Centraliza o quadrado */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 2.3s ease-in-out;
+    width: 100%;
+    aspect-ratio: 2/1;
+}
+
+.star {
+    position: absolute;
+    color: white;
+    font-size: 0.8rem;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.8), 0 0 10px rgba(173, 216, 230, 0.5);
+    animation: twinkle 4s infinite alternate;
+}
+
+@keyframes twinkle {
+    0% {
+        opacity: 0.5;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.bolinha {
+    position: absolute;
+    width: 4%;
+    aspect-ratio: 1/1;
+    border-radius: 50%;
+    background: var(--cor-estrelas);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    transition: transform 0.3s;
+}
+
+.bolinha:hover {
+    transform: scale(1.2);
+}
+
+/* === Posições das estrelas === */
+#estrela1 {
+    left: 34%;
+    top: 40%;
+}
+
+#estrela2 {
+    left: 45%;
+    top: 20%;
+}
+
+#estrela3 {
+    left: 42%;
+    top: 55%;
+}
+
+#estrela4 {
+    left: 55%;
+    top: 35%;
+}
+
+#estrela5 {
+    left: 65%;
+    top: 45%;
+}
+
+#estrela6 {
+    left: 75%;
+    top: 40%;
+}
+
+svg line {
+    stroke: var(--cor-estrelas);
+}
+
+.bolinha svg,
+#github-moon svg {
+    width: 65%;
+    height: 65%;
+    fill: var(--bg-page)
+}
+
+#github-moon {
+    color: var(--text-primary);
+    /* Usará a cor primária do tema */
+}
+
+/* Sol/Lua do GitHub */
+#github-moon {
+    position: absolute;
+    width: 8%;
+    aspect-ratio: 1/1;
+    border-radius: 50%;
+    right: 15%;
+    top: 15%;
+    display: block;
+    z-index: 100;
+    text-decoration: none;
+    transition: 0.8s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: var(--color-select-30);
+    border: solid 0.8vh var(--text-primary);
+    box-shadow: 0 0 30px var(--color-select-30);
+
+}
+
+#github-moon:hover {
+    transform: scale(1.15);
+    transition: 0.8s;
+}
+
+
+
+/* === Modal === */
+.conteudo {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background-color: var(--bg-page);
+    margin: 5% auto;
+    padding: 0;
+    border: 3px solid var(--text-secondary);
+    border-radius: 20px;
+    width: 90%;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 10px 30px var(--modal-shadow);
+    animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px) scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    z-index: 10;
+    transition: color 0.3s ease;
+}
+
+.close:hover {
+    color: var(--text-secondary);
+}
+
+.modal-header {
+    padding: 2rem 2rem 1rem;
+    border-bottom: 2px solid var(--text-secondary);
+    background: linear-gradient(135deg, var(--bg-page) 0%, var(--bg-nav) 100%);
+    border-radius: 17px 17px 0 0;
+}
+
+.modal-title {
+    font-size: clamp(1.8rem, 1.5rem + 1vw, 2.5rem);
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+}
+
+.modal-subtitle {
+    font-size: clamp(1rem, 0.9rem + 0.3vw, 1.2rem);
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.modal-body {
+    padding: 1.5rem 2rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+.modal-image {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    border: 2px solid var(--text-secondary);
+}
+
+.modal-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.modal-image:hover img {
+    transform: scale(1.05);
+}
+
+.modal-description {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.modal-description p {
+    font-size: clamp(0.95rem, 0.9rem + 0.2vw, 1.1rem);
+    line-height: 1.6;
+    color: var(--text-primary);
+    margin: 0;
+    text-align: justify;
+}
+
+.modal-features {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.modal-features li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--text-secondary);
+    color: var(--text-primary);
+    position: relative;
+    padding-left: 1.5rem;
+    font-size: clamp(0.9rem, 0.85rem + 0.2vw, 1rem);
+}
+
+.modal-features li:before {
+    position: absolute;
+    left: 0;
+    color: var(--text-secondary);
+    font-weight: bold;
+}
+
+.modal-footer {
+    padding: 1.5rem 2rem;
+    border-top: 2px solid var(--text-secondary);
+    text-align: center;
+    background: var(--modal-feature-bg);
+    border-radius: 0 0 17px 17px;
+}
+
+.modal-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: var(--text-primary);
+    color: var(--bg-page);
+    padding: 12px 24px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: 2px solid var(--text-primary);
+    cursor: none;
+}
+
+.modal-link:hover {
+    background-color: var(--text-secondary);
+    border-color: var(--text-secondary);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+
+/* BOTÃO PRINCIPAL */
+
+#btn-projetos {
+    text-align: center;
+}
+
+#toggle-button {
+    margin-top: 1rem;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding: 15px 28px;
+    border-radius: 10px;
+    transition: 0.3s;
+    display: inline-block;
+    text-align: center;
+    background-image: linear-gradient(90deg, var(--text-secondary), var(--text-primary), var(--text-secondary));
+    background-size: 200% 100%;
+    color: var(--bg-page);
+    border: none;
+    transition: 0.8s;
+}
+
+
+#toggle-button:hover {
+    background-position: -100% 0;
+    /* Move o gradiente 100% para a esquerda */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    transition: 0.8s;
+    text-decoration: underline 0.1rem;
+}
+
+#toggle-button:disabled {
+    background-image: linear-gradient(#6b7280);
+    color: var(--bg-page);
+    transform: translateY(0px);
+}
+
+/* BOTÕES DE VEÍCULO */
+.vehicle-btn-container {
+    margin-top: 1rem;
+    text-decoration: none;
+    z-index: 100;
+    display: inline-block;
+    background-color: rgba(31, 41, 55, 0.9);
+    padding: 0.8rem 1.2rem;
+    border-radius: 14px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    margin-bottom: 4%;
+}
+
+.vehicle-btn {
+    font-size: 2rem;
+    background: transparent;
+    border: none;
+    cursor: none;
+    color: white;
+    transition: transform 0.2s ease;
+}
+
+.vehicle-btn:hover {
+    transform: scale(1.25);
+}
+
+
+#contato {
+    width: 100%;
+    min-height: 100vh;
+    padding: 4% calc(5vw + 30px) 3%;
+    background-color: var(--text-primary);
+    color: var(--bg-page);
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+#contato .tit-cont h3 {
+    color: var(--bg-page);
+}
+
+#cont-subli {
+    background-color: var(--bg-page);
+}
+
+#form-contato {
+    display: grid;
+    gap: 1.6rem;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 5rem auto;
+}
+
+.mensagem {
+    grid-column: span 2;
+}
+
+.mensagem textarea {
+    resize: none;
+    height: 35vh;
+}
+
+@media (max-width: 768px) {
+    #form-contato {
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+.campo-contato {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    font-size: 1.1rem;
+    color: var(--bg-page);
+}
+
+.campo-contato label {
+    font-weight: 600;
+    font-size: clamp(16px, 2.5vw, 24px);
+
+}
+
+
+.campo-contato input,
+.campo-contato textarea {
+    padding: 9px;
+    border-radius: 10px;
+    background-color: var(--bg-page-50);
+    backdrop-filter: blur(6px);
+    border: 2px solid var(--bg-page);
+    font-size: 1rem;
+    color: var(--bg-nav);
+    transition: border-color var(--cor-estrelas), box-shadow var(--cor-estrelas);
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+.campo-contato input:focus,
+.campo-contato textarea:focus {
+    border-color: var(--text-secondary);
+    box-shadow: 0 0 0 3px var(--input-select);
+    outline: none;
+}
+
+#area-cont {
+    text-align: center;
+    align-items: center;
+    grid-column: span 2;
+}
+
+.telefone {
+    grid-column: span 2;
+}
+
+::-moz-placeholder {
+    color: var(--text-primary);
+    font-weight: 400;
+    text-decoration: underline;
+    opacity: 0.8;
+}
+
+:-ms-input-placeholder {
+    color: var(--text-primary);
+    text-decoration: underline;
+    font-weight: 400;
+    opacity: 0.8;
+}
+
+::placeholder {
+    color: var(--text-primary);
+    text-decoration: underline;
+    font-weight: 400;
+    opacity: 0.8;
+}
+
+#btn-enviar {
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+    padding: 14px 45px;
+    border-radius: 12px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    border: 3px solid var(--bg-page);
+    transition: 0.3s;
+    width: fit-content;
+
+}
+
+#btn-enviar:hover {
+    background-color: var(--bg-page-50);
+    border-color: var(--bg-page-50);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+}
+
+#area-cont span {
+    font-size: clamp(2rem, 1.6rem + 1vw, 3.5rem);
+    font-weight: 900;
+    margin: 2vh 0px;
+    display: block;
+}
+
+.tel-cont {
+    background-image: linear-gradient(90deg, var(--bg-page), var(--cor-veiculo), var(--bg-page));
+    background-size: 200% 100%;
+    /* Duplica o tamanho para permitir o shift */
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    cursor: pointer;
+    transition: background-position 1s ease;
+    /* Transição na saída do hover */
+    font-size: clamp(2rem, 1.5rem + 2vw, 3.5rem);
+    font-weight: 900;
+    cursor: none;
+}
+
+.tel-cont:hover {
+    background-position: -100% 0;
+    /* Move o gradiente 100% para a esquerda */
+    transition: background-position 0.5s linear;
+    /* Animação rápida na entrada */
+
+}
+
+#footer {
+    width: 100%;
+    text-align: center;
+    padding: 15px;
+    background-color: var(--text-primary);
+    backdrop-filter: blur(6px);
+    color: var(--bg-page);
+    font-size: 0.9rem;
+    border-top: 6px solid var(--bg-page);
+}
+
+
+/* RESPONSIVIDADE */
+@media (max-width: 768px) {
+    #car {
+        bottom: 15vh;
+        font-size: 5rem;
+    }
+
+    #road-layer {
+        height: 20vh;
+    }
+
+    #toggle-button {
+        padding: 10px 20px;
+    }
+}
+
+
+/* Responsividade */
+
+@media (max-width: 900px) {
+
+    nav {
+        flex-direction: column;
+        height: auto;
+        gap: 15px;
+        padding: 15px;
+    }
+
+    .nav-links {
+        justify-content: center;
+        width: 100%;
+    }
+
+    .botoes {
+        justify-content: center;
+        width: 100%;
+    }
+
+    #marker {
+        left: 15px;
+    }
+}
+
+@media (max-width: 600px) {
+
+    .nav-links li a {
+        font-size: 0.9rem;
+        gap: 0.5rem;
+    }
+
+    .action-buttons {
+        gap: 10px;
+    }
+
+    .cta-button {
+        font-size: 1rem;
+        padding: 10px 20px;
+    }
+
+    .slogan {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    #marker {
+        display: none;
+    }
+}
+
+/* ============ RESPONSIVIDADE DA SEÇÃO PROJETOS ============ */
+
+/* Tablets (768px - 1024px) */
+@media (max-width: 1024px) {
+    #projetos {
+        height: auto;
+        min-height: 90vh;
+        padding-bottom: 5%;
+    }
+
+    #noite-estrelada {
+        height: 70vh;
+    }
+
+    #car {
+        width: 25vh;
+        bottom: 8vh;
+    }
+
+    .vehicle-btn-container {
+        margin-bottom: 6%;
+        padding: 0.6rem 1rem;
+    }
+
+    .vehicle-btn {
+        font-size: 1.7rem;
+    }
+}
+
+/* Tablets Pequenos (600px - 768px) */
+@media (max-width: 768px) {
+    #projetos {
+        min-height: 85vh;
+        padding-top: 8%;
+    }
+
+    #noite-estrelada {
+        height: 60vh;
+    }
+
+    #car {
+        width: 22vh;
+        bottom: 9vh;
+    }
+
+    #road-layer {
+        height: 18vh;
+    }
+
+    .bolinha {
+        width: 5%;
+        font-size: 16px;
+    }
+
+    #github-moon {
+        width: 10%;
+    }
+
+    .vehicle-btn-container {
+        margin-bottom: 8%;
+        padding: 0.5rem 0.8rem;
+    }
+
+    .vehicle-btn {
+        font-size: 1.5rem;
+    }
+
+    #toggle-button {
+        padding: 12px 24px;
+        font-size: 1rem;
+    }
+}
+
+/* Telefones (480px - 600px) */
+@media (max-width: 600px) {
+    #projetos {
+        min-height: 80vh;
+        padding-top: 12%;
+    }
+
+    .espa-proj {
+        margin: 0 5%;
+    }
+
+    #noite-estrelada {
+        height: 50vh;
+    }
+
+    #car {
+        width: 18vh;
+        bottom: 10vh;
+    }
+
+    #road-layer {
+        height: 15vh;
+        width: 300%;
+    }
+
+    .parallax-layer {
+        width: 250%;
+    }
+
+    /* Ajuste das estrelas para telas menores */
+    .bolinha {
+        width: 6%;
+        font-size: 14px;
+    }
+
+    #estrela1 {
+        left: 30%;
+        top: 35%;
+    }
+
+    #estrela2 {
+        left: 40%;
+        top: 15%;
+    }
+
+    #estrela3 {
+        left: 38%;
+        top: 50%;
+    }
+
+    #estrela4 {
+        left: 50%;
+        top: 30%;
+    }
+
+    #estrela5 {
+        left: 60%;
+        top: 40%;
+    }
+
+    #estrela6 {
+        left: 70%;
+        top: 35%;
+    }
+
+    #github-moon {
+        width: 12%;
+        right: 10%;
+        top: 10%;
+    }
+
+    .vehicle-btn-container {
+        margin-bottom: 10%;
+        padding: 0.4rem 0.6rem;
+    }
+
+    .vehicle-btn {
+        font-size: 1.3rem;
+    }
+
+    .vehicle-btn:hover {
+        transform: scale(1.15);
+    }
+
+    #toggle-button {
+        padding: 10px 20px;
+        font-size: 0.95rem;
+    }
+
+
+}
+
+/* Telefones Pequenos (até 480px) */
+@media (max-width: 480px) {
+    #projetos {
+        min-height: 75vh;
+        padding-top: 15%;
+    }
+
+    #noite-estrelada {
+        height: 45vh;
+    }
+
+    #car {
+        width: 15vh;
+        bottom: 11vh;
+    }
+
+    #road-layer {
+        height: 13vh;
+        width: 350%;
+    }
+
+    .parallax-layer {
+        width: 300%;
+    }
+
+    .bolinha {
+        width: 7%;
+        font-size: 12px;
+    }
+
+    #github-moon {
+        width: 15%;
+        right: 8%;
+        top: 8%;
+    }
+
+    .vehicle-btn-container {
+        margin-bottom: 12%;
+        padding: 0.3rem 0.5rem;
+    }
+
+    .vehicle-btn {
+        font-size: 1.1rem;
+    }
+
+    #toggle-button {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+    }
+
+    /* Modal em telas muito pequenas */
+    .modal-content {
+        width: 85%;
+        margin: 25% auto;
+        padding: 15px;
+    }
+}
+
+/* Telas muito grandes (acima de 1400px) */
+@media (min-width: 1400px) {
+    #projetos {
+        height: 125vh;
+    }
+
+    #noite-estrelada {
+        height: 90vh;
+    }
+
+    #car {
+        width: 32vh;
+        bottom: 6vh;
+    }
+
+    .vehicle-btn-container {
+        margin-bottom: 3%;
+    }
+
+    .vehicle-btn {
+        font-size: 2.2rem;
+    }
+}
+
+/* Orientação paisagem em telefones */
+@media (max-height: 500px) and (orientation: landscape) {
+    #projetos {
+        min-height: 120vh;
+        padding-top: 8%;
+    }
+
+    #noite-estrelada {
+        height: 70vh;
+    }
+
+    #car {
+        width: 20vh;
+        bottom: 12vh;
+    }
+
+    .vehicle-btn-container {
+        margin-bottom: 5%;
+    }
+}
+
+/* ============ RESPONSIVIDADE DOS MODAIS ============ */
+
+/* Tablets (768px - 1024px) */
+@media (max-width: 1024px) {
+    .modal-content {
+        width: 85%;
+        margin: 8% auto;
+    }
+
+    .modal-body {
+        gap: 1.5rem;
+        padding: 1.5rem;
+    }
+
+    .modal-header {
+        padding: 1.5rem 1.5rem 1rem;
+    }
+
+    .modal-footer {
+        padding: 1.5rem;
+    }
+}
+
+/* Tablets Pequenos (600px - 768px) */
+@media (max-width: 768px) {
+    .modal-content {
+        width: 90%;
+        margin: 10% auto;
+        max-height: 85vh;
+    }
+
+    .modal-body {
+        grid-template-columns: 1fr;
+        gap: 1.2rem;
+        padding: 1.2rem;
+    }
+
+    .modal-header {
+        padding: 1.2rem 1.2rem 0.8rem;
+    }
+
+    .modal-footer {
+        padding: 1.2rem;
+    }
+
+    .modal-image {
+        order: -1;
+    }
+}
+
+/* Telefones (480px - 600px) */
+@media (max-width: 600px) {
+    .modal-content {
+        width: 95%;
+        margin: 5% auto;
+        max-height: 90vh;
+        border-radius: 15px;
+    }
+
+    .modal-body {
+        padding: 1rem;
+        gap: 1rem;
+    }
+
+    .modal-header {
+        padding: 1rem 1rem 0.5rem;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .modal-footer {
+        padding: 1rem;
+        border-radius: 0 0 12px 12px;
+    }
+
+    .close {
+        top: 10px;
+        right: 15px;
+        font-size: 24px;
+    }
+
+    .modal-link {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+}
+
+/* Telefones Pequenos (até 480px) */
+@media (max-width: 480px) {
+    .modal-content {
+        width: 98%;
+        margin: 2% auto;
+        border-radius: 12px;
+    }
+
+    .modal-body {
+        padding: 0.8rem;
+        gap: 0.8rem;
+    }
+
+    .modal-header {
+        padding: 0.8rem 0.8rem 0.5rem;
+    }
+
+    .modal-footer {
+        padding: 0.8rem;
+    }
+
+    .modal-title {
+        font-size: 1.5rem;
+    }
+
+    .modal-subtitle {
+        font-size: 0.9rem;
+    }
+
+    .modal-features li {
+        font-size: 0.85rem;
+        padding: 0.4rem 0;
+        padding-left: 1.2rem;
+    }
+}
+
+/* Orientação paisagem em telefones */
+@media (max-height: 500px) and (orientation: landscape) {
+    .modal-content {
+        margin: 2% auto;
+        max-height: 96vh;
+    }
+
+    .modal-body {
+        grid-template-columns: 1fr 1fr;
+        padding: 1rem;
+    }
+
+    .modal-header {
+        padding: 1rem 1rem 0.5rem;
+    }
+
+    .modal-footer {
+        padding: 1rem;
+    }
+}
+
+/* ============ BOTÕES DE VEÍCULO MAIORES ============ */
+.vehicle-btn-container {
+    margin-top: 1rem;
+    text-decoration: none;
+    z-index: 100;
+    display: inline-block;
+    background-color: rgba(31, 41, 55, 0.9);
+    padding: 1rem 1.5rem;
+    /* Aumentei o padding */
+    border-radius: 16px;
+    /* Aumentei o border-radius */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    margin-bottom: 4%;
+}
+
+.vehicle-btn {
+    font-size: 2.8rem;
+    /* Aumentei o tamanho da fonte */
+    background: transparent;
+    border: none;
+    cursor: none;
+    color: white;
+    transition: transform 0.2s ease;
+    padding: 0 8px;
+    /* Adicionei padding horizontal */
+}
+
+.vehicle-btn:hover {
+    transform: scale(1.3);
+    /* Aumentei ligeiramente o hover */
+}
+
+.vehicle-btn img {
+    width: 40px;
+    /* Defini um tamanho fixo para as imagens */
+    height: 40px;
+    object-fit: contain;
+}
+
+/* Ajustes responsivos para os botões maiores */
+@media (max-width: 768px) {
+    .vehicle-btn-container {
+        padding: 0.8rem 1.2rem;
+    }
+
+    .vehicle-btn {
+        font-size: 2.2rem;
+        padding: 0 6px;
+    }
+
+    .vehicle-btn img {
+        width: 35px;
+        height: 35px;
+    }
+}
+
+@media (max-width: 600px) {
+    .vehicle-btn-container {
+        padding: 0.6rem 1rem;
+    }
+
+    .vehicle-btn {
+        font-size: 1.8rem;
+        padding: 0 4px;
+    }
+
+    .vehicle-btn img {
+        width: 30px;
+        height: 30px;
+    }
+}
+
+/* ============ DESATIVAR CURSOR PERSONALIZADO EM MOBILE ============ */
+@media (max-width: 768px) {
+
+    /* Restaurar cursor padrão e esconder cursor personalizado */
+    * {
+        cursor: auto !important;
+    }
+
+    #custom-pointer,
+    #custom-pointer-trail {
+        display: none !important;
+    }
+
+    /* Garantir que elementos interativos tenham cursor pointer */
+    .cursor-link-button,
+    button,
+    a,
+    .vehicle-btn,
+    .cta-button,
+    .icon-button,
+    .close,
+    .modal-link,
+    .bolinha,
+    #toggle-button,
+    #languageToggle,
+    #darkModeToggle,
+    .nav-links a,
+    .opcoes span {
+        cursor: pointer !important;
+    }
+
+    /* Garantir que campos de texto tenham cursor text */
+    .cursor-text-box,
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    textarea {
+        cursor: text !important;
+    }
+}
+
+#menu-toggle {
+    display: none;
+    background: transparent;
+    border: none;
+    font-size: 2rem;
+    color: var(--text-primary);
+}
+
+@media (max-width: 366px) {
+    nav {
+        flex-direction: row;
+
+    }
+
+    .nav-links {
+        justify-content: center;
+        width: auto;
+    }
+
+    #mobile-menu li a {
+        font-size: 0.9rem;
+        color: var(--bg-page);
+
+        opacity: 0;
+        transform: translateY(-18px) scale(0.95);
+        transition:
+            opacity 0.45s ease,
+            transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    /* LINKS ABERTOS */
+    #mobile-menu.active li a {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+    /* CASCATA */
+    #mobile-menu.active li a:nth-child(1) {
+        transition-delay: 0.12s;
+    }
+
+    #mobile-menu.active li a:nth-child(2) {
+        transition-delay: 0.18s;
+    }
+
+    #mobile-menu.active li a:nth-child(3) {
+        transition-delay: 0.24s;
+    }
+
+    #mobile-menu.active li a:nth-child(4) {
+        transition-delay: 0.30s;
+    }
+
+    #mobile-menu.active li a:nth-child(5) {
+        transition-delay: 0.36s;
+    }
+
+    #mobile-menu.active li a:nth-child(6) {
+        transition-delay: 0.42s;
+    }
+
+    .botoes {
+        justify-content: center;
+        width: auto;
+    }
+
+    .curriculo-desktop {
+        display: none;
+    }
+
+    .menu-toggle {
+        display: flex !important;
+        z-index: 300;
+        min-height: 30px;
+        min-width: 30px;
+    }
+
+    #mobile-menu {
+        display: flex;
+        position: absolute;
+        top: calc(85px - 1.6vh);
+        left: 0;
+        right: 0.5px;
+
+        flex-direction: column;
+        align-items: center;
+        gap: 18px;
+        padding: 10px;
+
+        background: var(--color-mobile);
+
+        overflow: hidden;
+        transform-origin: top center;
+
+        /* fechado */
+        transform: scaleY(0) rotateX(-25deg);
+        opacity: 0;
+        max-height: 0;
+        pointer-events: none;
+
+        transition:
+            transform 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+            opacity 0.4s ease,
+            max-height 0.65s ease;
+    }
+
+    /* aberto */
+    #mobile-menu.active {
+        transform: scaleY(1) rotateX(0deg);
+        opacity: 1;
+        max-height: 500px;
+        pointer-events: all;
+    }
+
+    /* brilho/sombra estilo papiro */
+    #mobile-menu::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 14px;
+
+        pointer-events: none;
+    }
+
+    .mobile-curriculo {
+        padding-top: 10px;
+        border-top: 4px solid var(--bg-page);
+        width: 100%;
+        text-align: center;
+        display: inline;
+    }
+
+    .mobile-curriculo a {
+        font-weight: 700;
+        color: var(--bg-page);
+        text-decoration: none;
+    }
+}
